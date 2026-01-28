@@ -35,5 +35,7 @@ enum class EDescDataType
     bdtBin = 2
 };
 
+// тестовый коммит
+
 
 #endif // COMMONDEFINETYPE_H
