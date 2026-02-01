@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVector>
 #include <QList>
+#include <QStringList>
 
 struct SokratSoftWareVersionDesc {
     QString software_name;
@@ -28,14 +29,33 @@ struct SokratSoftWareVersionDesc {
     }
 };
 
-enum class EDescDataType
-{
+enum class EDescDataType {
     bdtSigned = 0,
     bdtUnsigned = 1,
     bdtBin = 2
 };
 
-// тестовый коммит
+struct SModulePropertiesDesc {
+    quint8 cProperties;
+    QVector<quint32> Address;
+    QStringList NameProperties;
+    QVector<EDescDataType> enDBTypes;
+    QVector<quint16> usBits;
+    QStringList NameBits;
+    QVector<quint32> InitValue;
+    QVector<quint32> MinValue;
+    QVector<quint32> MaxValue;
+    //QVector<quint32> RealValue;
+    //QVector<quint32> NewValue;
+};
+
+struct SModuleDataBase {
+    QString ModuleName;
+    QString ModuleDesc;
+    SModulePropertiesDesc SParams;
+    SModulePropertiesDesc SCommand;
+    SModulePropertiesDesc SSignals;
+};
 
 
 #endif // COMMONDEFINETYPE_H

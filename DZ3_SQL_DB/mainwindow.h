@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QDebug>
+#include <QStringListModel>
+
+#include "sokrat3_db.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +27,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QString db_esc_path_file_{};
+    QStringListModel modules_name_model_;
+
 };
 #endif // MAINWINDOW_H

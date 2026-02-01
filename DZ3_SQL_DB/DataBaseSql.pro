@@ -17,11 +17,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    sokrat3_db.cpp
 
 HEADERS += \
     CommonDefineType.h \
-    mainwindow.h
+    mainwindow.h \
+    sokrat3_db.h
 
 FORMS += \
     mainwindow.ui
