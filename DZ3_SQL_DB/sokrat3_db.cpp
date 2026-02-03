@@ -17,20 +17,20 @@ bool Sokrat3_DB::OpenParseSystemFile() {
         qint16 numberStringNameModule = 9;
         QString read_string;
         QString name_string;
+        QTextStream txt_stream(&stm_file);
 
-        read_string = stm_file.readLine();
+        read_string = txt_stream.readLine();
         cDataString++;
-        sokrat_name_ = stm_file.readLine();
-        sokrat_name_ = sokrat_name_.trimmed();
+        sokrat_name_ = txt_stream.readLine();
         cDataString++;
-        read_string = stm_file.readLine();
-        read_string = read_string.trimmed();
+        read_string = txt_stream.readLine();
         cDataString++;
 
         sokrat_name_ += "_v" + read_string;
         qDebug() << "System name - " << sokrat_name_;
 
-        while ((read_string = stm_file.readLine()) != NULL) {
+        while (!txt_stream.atEnd()) {
+            read_string = txt_stream.readLine();
             cDataString++;
             if (cDataString == numberStringNameModule) {
                 name_string = read_string.trimmed();
