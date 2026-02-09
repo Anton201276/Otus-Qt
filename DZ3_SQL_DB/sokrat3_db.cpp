@@ -17,20 +17,20 @@ bool Sokrat3_DB::OpenParseSystemFile() {
         qint16 numberStringNameModule = 9;
         QString read_string;
         QString name_string;
-        QTextStream txt_stream(&stm_file);
 
-        read_string = txt_stream.readLine();
+        read_string = stm_file.readLine();
         cDataString++;
-        sokrat_name_ = txt_stream.readLine();
+        sokrat_name_ = stm_file.readLine();
+        sokrat_name_ = sokrat_name_.trimmed();
         cDataString++;
-        read_string = txt_stream.readLine();
+        read_string = stm_file.readLine();
+        read_string = read_string.trimmed();
         cDataString++;
 
         sokrat_name_ += "_v" + read_string;
         qDebug() << "System name - " << sokrat_name_;
 
-        while (!txt_stream.atEnd()) {
-            read_string = txt_stream.readLine();
+        while ((read_string = stm_file.readLine()) != NULL) {
             cDataString++;
             if (cDataString == numberStringNameModule) {
                 name_string = read_string.trimmed();
@@ -63,8 +63,16 @@ bool Sokrat3_DB::OpenParseSystemFile() {
     return ret;
 }
 
-void Sokrat3_DB::GetListModulesName(QStringList& list) {
+void Sokrat3_DB::GetListModulesName(QStringList& list) const {
+    list.clear();
     list << modules_names_;
+}
+
+void Sokrat3_DB::GetListModulesDesc(QStringList& list) const {
+    list.clear();
+    for (auto it = list_modules_desc_.begin(); it != list_modules_desc_.end(); ++it) {
+        list << it.value();
+    }
 }
 
 /*

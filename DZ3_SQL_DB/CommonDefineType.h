@@ -52,9 +52,9 @@ struct SModulePropertiesDesc {
 struct SModuleDataBase {
     QString ModuleName;
     QString ModuleDesc;
-    SModulePropertiesDesc SParams;
-    SModulePropertiesDesc SCommand;
-    SModulePropertiesDesc SSignals;
+    qint32 ModuleParams_Number;
+    qint32 ModuleCommands_Number;
+    qint32 ModuleSignals_Number;
 };
 
 

@@ -26,6 +26,6 @@ void MainWindow::on_action_ESC_Config_triggered()
     Sokrat3_DB sokratDB(db_sokrat_path_file);
     QStringList list_names;
     sokratDB.GetListModulesName(list_names);
-    modules_name_model_.setStringList(list_names);
-    ui->treeView->setModel(&modules_name_model_);
+    //modules_name_model_.setStringList(list_names);
+    //ui->treeView->setModel(&modules_name_model_);
 }

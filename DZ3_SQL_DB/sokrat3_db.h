@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QString>
 #include <QFile>
+#include <QHash>
 
 #include "CommonDefineType.h"
 
@@ -13,7 +14,8 @@ class Sokrat3_DB
 public:
     Sokrat3_DB(const QString db_path);
 
-    void GetListModulesName(QStringList& list);
+    void GetListModulesName(QStringList& list) const;
+    void GetListModulesDesc(QStringList& list) const;
 
 private:
     bool OpenParseSystemFile();
@@ -22,9 +24,15 @@ private:
 
     QString db_path_{};
     QString sokrat_name_{};
+    QString sokrat_date_{};
     QStringList modules_names_;
+    QHash<QString,QString> list_modules_desc_;
+    QHash<QString,SModulePropertiesDesc> list_modules_params_;
+    QHash<QString,SModulePropertiesDesc> list_modules_commands_;
+    QHash<QString,SModulePropertiesDesc> list_modules_signals_;
     QString module_name_{};
-    SModuleDataBase moduleDB_;
+    QString module_properties_{};
+    SModulePropertiesDesc module_properties_values_;
 };
 
 #endif // SOKRAT3_DB_H

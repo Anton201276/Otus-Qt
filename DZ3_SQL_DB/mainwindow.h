@@ -27,7 +27,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QStringListModel modules_name_model_;
+    QStringListModel *modules_name_model_;
 
 };
 #endif // MAINWINDOW_H
