@@ -17,8 +17,11 @@ public:
     void GetListModulesName(QStringList& list) const;
     void GetListModulesDesc(QStringList& list) const;
 
+    bool Get_DbIsOk() const;
+
 private:
-    bool OpenParseSystemFile();
+    bool CreateDB_FromFiles();
+    bool ParseModuleDescFile(const QString mdl_name);
 
 private:
 
@@ -33,6 +36,7 @@ private:
     QString module_name_{};
     QString module_properties_{};
     SModulePropertiesDesc module_properties_values_;
+    bool dbIsOk_ = false;
 };
 
 #endif // SOKRAT3_DB_H

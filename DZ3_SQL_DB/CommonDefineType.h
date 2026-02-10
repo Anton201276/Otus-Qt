@@ -35,6 +35,12 @@ enum class EDescDataType {
     bdtBin = 2
 };
 
+enum class EModuleFields {
+    PARAMS,
+    COMMANDS,
+    SIGNALS
+};
+
 struct SModulePropertiesDesc {
     quint8 cProperties;
     QVector<quint32> Address;
