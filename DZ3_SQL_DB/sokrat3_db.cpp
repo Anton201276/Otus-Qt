@@ -34,8 +34,8 @@ bool Sokrat3_DB::CreateDB_FromFiles() {
             cRead_string++;
             if (cRead_string == numberStringNameModule) {
                 name_string = read_string.trimmed();
-
-                //ret = ParseModuleDescFile(name_string);
+                QString module_path = db_path_.remove("System.stm") + "Modules/" + name_string;
+                ret = ParseModuleDescFile(module_path);
                 if (!ret) {
                     break;
                 }
@@ -72,8 +72,20 @@ bool Sokrat3_DB::Get_DbIsOk() const {
     return dbIsOk_;
 }
 
-bool Sokrat3_DB::ParseModuleDescFile(const QString module_name) {
-    bool ret=false;
+bool Sokrat3_DB::ParseModuleDescFile(const QString& path_module_name) {
+    bool ret=true;
+    qDebug() << "ParseModuleDesc desc = " << path_module_name;
+    QFile module_file(path_module_name);
+
+    if (QFile::exists(path_module_name) && module_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qint16 cRead_string = 0;
+        QString read_string;
+        read_string = module_file.readLine();
+        qDebug() << "ParseModuleDesc desc = " << read_string;
+    }
+
+
+
 
 
     return ret;

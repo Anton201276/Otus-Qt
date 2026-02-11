@@ -21,7 +21,7 @@ public:
 
 private:
     bool CreateDB_FromFiles();
-    bool ParseModuleDescFile(const QString mdl_name);
+    bool ParseModuleDescFile(const QString& mdl_name);
 
 private:
 

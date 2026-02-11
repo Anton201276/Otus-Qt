@@ -16,12 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    control_db.cpp \
     main.cpp \
     mainwindow.cpp \
     sokrat3_db.cpp
 
 HEADERS += \
     CommonDefineType.h \
+    control_db.h \
     mainwindow.h \
     sokrat3_db.h
 
