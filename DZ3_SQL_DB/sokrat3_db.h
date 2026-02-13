@@ -21,7 +21,8 @@ public:
 
 private:
     bool CreateDB_FromFiles();
-    bool ParseModuleDescFile(const QString& mdl_name);
+    bool ParseModuleDescFile(const QString& module_name);
+    bool AddModuleProperties(QHash<QString,SModulePropertiesDesc>* ptrPropertyField, QStringList* ptrStrings_ModuleDesc, quint16 cReadStrings, quint16 numProperties);
 
 private:
 

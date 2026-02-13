@@ -25,13 +25,13 @@ void MainWindow::on_action_ESC_Config_triggered()
     qDebug() << "Path = " << db_sokrat_path_file;
     Sokrat3_DB sokratDB(db_sokrat_path_file);
     QStringList list_names;
+    QStringList list_descs;
     sokratDB.GetListModulesName(list_names);
-    //modules_name_model_.setStringList(list_names);
-    //ui->treeView->setModel(&modules_name_model_); C:\Disk_D\Antwork\WorkSoft\Sibmach\Sokrat3\BaseDataDesc\Modules
-    QString s1 = "directory/folder1/folder2/system.stm";
-    QString s2 = "System.stm";
-    QString s3 = "Modules/blockdesc.mdl";
+    sokratDB.GetListModulesDesc(list_descs);
 
-    s3 = db_sokrat_path_file.remove(s2) + s3;
-    qDebug() << "Module file = " << s3;
+    QStringListModel *model_desc = new QStringListModel(list_descs);
+    QStringListModel *model_name = new QStringListModel(list_names);
+
+    ui->listView_desc->setModel(model_desc);
+    ui->listView_name->setModel(model_name);
 }

@@ -34,15 +34,17 @@ bool Sokrat3_DB::CreateDB_FromFiles() {
             cRead_string++;
             if (cRead_string == numberStringNameModule) {
                 name_string = read_string.trimmed();
-                QString module_path = db_path_.remove("System.stm") + "Modules/" + name_string;
-                ret = ParseModuleDescFile(module_path);
+                modules_names_ << name_string;
+                qDebug() << "Modules name - " << name_string;
+
+                ret = ParseModuleDescFile(name_string);
                 if (!ret) {
                     break;
                 }
-                modules_names_ << name_string;
+
                 numberStringNameModule += 3;
                 cModules++;
-                qDebug() << "Modules name - " << name_string;
+
             }
         }
 
@@ -63,8 +65,8 @@ void Sokrat3_DB::GetListModulesName(QStringList& list) const {
 
 void Sokrat3_DB::GetListModulesDesc(QStringList& list) const {
     list.clear();
-    for (auto it = list_modules_desc_.begin(); it != list_modules_desc_.end(); ++it) {
-        list << it.value();
+    for (auto it = modules_names_.begin(); it != modules_names_.end(); ++it) {
+        list << list_modules_desc_[*it];
     }
 }
 
@@ -72,21 +74,51 @@ bool Sokrat3_DB::Get_DbIsOk() const {
     return dbIsOk_;
 }
 
-bool Sokrat3_DB::ParseModuleDescFile(const QString& path_module_name) {
+bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
     bool ret=true;
-    qDebug() << "ParseModuleDesc desc = " << path_module_name;
-    QFile module_file(path_module_name);
+    QString module_path = db_path_.remove("System.stm") + "Modules/" + name_module + ".mdl";
+    qDebug() << "ParseModuleDesc desc = " << module_path;
+    QFile module_file(module_path);
+    QTextStream text_stream(&module_file);
+    text_stream.setCodec("Windows-1251");
 
-    if (QFile::exists(path_module_name) && module_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qint16 cRead_string = 0;
+    const quint16 num_string_module_name = 0;
+    const quint16 num_string_module_paramas = 4;
+
+    if (QFile::exists(module_path) && module_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qint16 cRead_string = num_string_module_name;
         QString read_string;
-        read_string = module_file.readLine();
-        qDebug() << "ParseModuleDesc desc = " << read_string;
+        QStringList allStrings_ModuleDesc;
+
+        while(!text_stream.atEnd()) {
+            allStrings_ModuleDesc << text_stream.readLine();
+        }
+
+        list_modules_desc_[name_module] = allStrings_ModuleDesc[cRead_string];
+        //read_string = read_string.trimmed();
+        qDebug() << "Название модуля = " << read_string;
+        //cRead_string++;
+
+        cRead_string = num_string_module_paramas;
+        quint16 number_prop = 0;
+        number_prop = allStrings_ModuleDesc[cRead_string].toInt();
+
+        //Параметры модуля
+        if (number_prop > 0) {
+            AddModuleProperties(&list_modules_params_, &allStrings_ModuleDesc, cRead_string, number_prop);
+        }
+        else {
+            cRead_string++;
+        }
+
+
     }
 
+    return ret;
+}
 
-
-
+bool Sokrat3_DB::AddModuleProperties(QHash<QString,SModulePropertiesDesc>* ptrPropertyField, QStringList* ptrStrings_ModuleDesc, quint16 cReadStrings, quint16 numProperties) {
+    bool ret=true;
 
     return ret;
 }
