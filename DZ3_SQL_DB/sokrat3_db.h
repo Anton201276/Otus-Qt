@@ -22,7 +22,9 @@ public:
 private:
     bool CreateDB_FromFiles();
     bool ParseModuleDescFile(const QString& module_name);
-    bool AddModuleProperties(QHash<QString,SModulePropertiesDesc>* ptrPropertyField, QStringList* ptrStrings_ModuleDesc, quint16 cReadStrings, quint16 numProperties);
+    //bool AddModuleProperties(QHash<QString,SModulePropertiesDesc>* ptrPropertyField, QStringList* ptrStrings_ModuleDesc, quint16 cReadStrings, quint16 numProperties);
+    //bool AddModuleParameters(const QString& module_name, const QStringList* ptrStrings_ModuleDesc, quint16& cReadStrings, quint16& numProperties);
+    bool ParseItemModule(SModulePropertiesDesc& module_properties, const QStringList& ptrStrings_ModuleDesc, quint16& cReadStrings, quint16& numProperties);
 
 private:
 

@@ -48,9 +48,9 @@ struct SModulePropertiesDesc {
     QVector<EDescDataType> enDBTypes;
     QVector<quint16> usBits;
     QStringList NameBits;
-    QVector<quint32> InitValue;
-    QVector<quint32> MinValue;
-    QVector<quint32> MaxValue;
+    QVector<qint32> InitValue;
+    QVector<qint32> MinValue;
+    QVector<qint32> MaxValue;
     //QVector<quint32> RealValue;
     //QVector<quint32> NewValue;
 };

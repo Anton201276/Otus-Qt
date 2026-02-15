@@ -44,17 +44,15 @@ bool Sokrat3_DB::CreateDB_FromFiles() {
 
                 numberStringNameModule += 3;
                 cModules++;
-
             }
         }
-
-        ret = true;
+        system_file.close();
     }
     else {
         qDebug() << "Ошибка открытия файла:" << system_file.errorString();
         ret = false;
     }
-    system_file.close();
+
     return ret;
 }
 
@@ -86,8 +84,8 @@ bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
     const quint16 num_string_module_paramas = 4;
 
     if (QFile::exists(module_path) && module_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qint16 cRead_string = num_string_module_name;
-        QString read_string;
+        quint16 cRead_string = num_string_module_name;
+        //QString read_string;
         QStringList allStrings_ModuleDesc;
 
         while(!text_stream.atEnd()) {
@@ -96,29 +94,101 @@ bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
 
         list_modules_desc_[name_module] = allStrings_ModuleDesc[cRead_string];
         //read_string = read_string.trimmed();
-        qDebug() << "Название модуля = " << read_string;
+        qDebug() << "Название модуля = " << list_modules_desc_[name_module];
         //cRead_string++;
 
         cRead_string = num_string_module_paramas;
+        SModulePropertiesDesc module_properties;
         quint16 number_prop = 0;
-        number_prop = allStrings_ModuleDesc[cRead_string].toInt();
+
 
         //Параметры модуля
+        number_prop = allStrings_ModuleDesc[cRead_string].toInt();
         if (number_prop > 0) {
-            AddModuleProperties(&list_modules_params_, &allStrings_ModuleDesc, cRead_string, number_prop);
+            ParseItemModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
+            list_modules_params_[name_module] = std::move(module_properties);
+            qDebug() << "Считали параметры";
         }
         else {
             cRead_string++;
         }
 
+        //Команды модуля
+        number_prop = allStrings_ModuleDesc[cRead_string].toInt();
+        if (number_prop > 0) {
+            ParseItemModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
+            list_modules_commands_[name_module] = std::move(module_properties);
+            qDebug() << "Считали команды";
+        }
+        else {
+            cRead_string++;
+        }
 
+        //Сигналы модуля
+        number_prop = allStrings_ModuleDesc[cRead_string].toInt();
+        if (number_prop > 0) {
+            ParseItemModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
+            list_modules_signals_[name_module] = std::move(module_properties);
+            qDebug() << "Считали сигналы";
+        }
+        else {
+            cRead_string++;
+        }
+
+        module_file.close();
+    }
+    else {
+        ret = false;
     }
 
     return ret;
 }
 
-bool Sokrat3_DB::AddModuleProperties(QHash<QString,SModulePropertiesDesc>* ptrPropertyField, QStringList* ptrStrings_ModuleDesc, quint16 cReadStrings, quint16 numProperties) {
-    bool ret=true;
+//bool ParseItemModule(SModulePropertiesDesc& module_properties, const QStringList* ptrStrings_ModuleDesc, quint16& cReadStrings, quint16& numProperties);
+
+bool Sokrat3_DB::ParseItemModule(SModulePropertiesDesc& module_properties, const QStringList& strings_ModuleDesc, quint16& cReadStrings, quint16& numProperties) {
+    bool ret = true;
+    module_properties.cProperties = numProperties;
+    qDebug() << "Количество свойст элемента - " << module_properties.cProperties;
+    quint16 cnt_strings  = cReadStrings + 1;
+
+    for(quint16 j = 0; j < numProperties; ++j) {
+        qDebug() << "Номер строки - " << cnt_strings;
+        module_properties.Address.push_back(j);
+        module_properties.NameProperties << strings_ModuleDesc[cnt_strings++];
+        cnt_strings++;
+        qDebug() << "Описание свойста элемента - " << module_properties.NameProperties;
+
+        if (strings_ModuleDesc[cnt_strings] == "U2" || strings_ModuleDesc[cnt_strings] == "I2") {
+            module_properties.usBits.push_back(0);
+            module_properties.enDBTypes.push_back(strings_ModuleDesc[++cnt_strings] == "U2" ? EDescDataType::bdtUnsigned : EDescDataType::bdtSigned);
+            module_properties.InitValue.push_back((strings_ModuleDesc[++cnt_strings]).toInt());
+            module_properties.MinValue.push_back((strings_ModuleDesc[++cnt_strings]).toInt());
+            module_properties.MaxValue.push_back((strings_ModuleDesc[++cnt_strings]).toInt());
+            cnt_strings++;
+        }
+        else {
+            qDebug() << "Номер строки и значение битового поля - " << cnt_strings << " ---- " << strings_ModuleDesc[cnt_strings];
+            module_properties.enDBTypes.push_back(EDescDataType::bdtBin);
+            module_properties.InitValue.push_back((strings_ModuleDesc[++cnt_strings]).toUInt());
+            module_properties.MinValue.push_back(0);
+            module_properties.MaxValue.push_back(65535);
+            quint16 numBits = (strings_ModuleDesc[++cnt_strings]).toUInt();
+            module_properties.usBits.push_back(numBits);
+            qDebug() << "Количество бит поля = " << numBits;
+            cnt_strings += 2;
+            for (quint16 j = 0; j < numBits; ++j) {
+
+                module_properties.NameBits << strings_ModuleDesc[cnt_strings];
+                qDebug() << "название бита = " << module_properties.NameBits;
+                qDebug() << "номер строки = " << cnt_strings;
+                cnt_strings += 2;
+            }
+            //cnt_strings++;
+        }
+    }
+
+    cReadStrings = cnt_strings;
 
     return ret;
 }
