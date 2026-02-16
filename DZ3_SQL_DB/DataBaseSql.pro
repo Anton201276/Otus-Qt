@@ -19,16 +19,19 @@ SOURCES += \
     control_db.cpp \
     main.cpp \
     mainwindow.cpp \
-    sokrat3_db.cpp
+    sokrat3_db.cpp \
+    view_db_sokrat3.cpp
 
 HEADERS += \
     CommonDefineType.h \
     control_db.h \
     mainwindow.h \
-    sokrat3_db.h
+    sokrat3_db.h \
+    view_db_sokrat3.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    view_db_sokrat3.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

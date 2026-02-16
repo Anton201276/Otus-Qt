@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "view_db_sokrat3.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -34,4 +36,7 @@ void MainWindow::on_action_ESC_Config_triggered()
 
     ui->listView_desc->setModel(model_desc);
     ui->listView_name->setModel(model_name);
+
+    View_DB_Sokrat3* Form_DB_Sokrat3 = new View_DB_Sokrat3(nullptr, db_sokrat_path_file);
+    Form_DB_Sokrat3->show();
 }
