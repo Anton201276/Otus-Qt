@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QString>
+#include <QStandardItemModel>
+#include <QDebug>
 
 namespace Ui {
 class View_DB_Sokrat3;
@@ -18,6 +20,8 @@ public:
 
 private:
     Ui::View_DB_Sokrat3 *ui;
+    QStandardItemModel *model_;
+    QStandardItem *rootItem_;
 };
 
 #endif // DIALOG_DB_SOKRAT3_H
