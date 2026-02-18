@@ -5,6 +5,7 @@
 #include <QString>
 #include <QFile>
 #include <QHash>
+#include <QStandardItemModel>
 
 #include "CommonDefineType.h"
 
@@ -21,6 +22,7 @@ public:
 
 private:
     bool CreateDB_FromFiles();
+    bool CreateDB_ItemModels();
     bool ParseModuleDescFile(const QString& module_name);
     //bool AddModuleProperties(QHash<QString,SModulePropertiesDesc>* ptrPropertyField, QStringList* ptrStrings_ModuleDesc, quint16 cReadStrings, quint16 numProperties);
     //bool AddModuleParameters(const QString& module_name, const QStringList* ptrStrings_ModuleDesc, quint16& cReadStrings, quint16& numProperties);
@@ -39,7 +41,13 @@ private:
     QString module_name_{};
     QString module_properties_{};
     SModulePropertiesDesc module_properties_values_;
+
+    QStandardItemModel *SokratTree_ItemModel_;
+    QStandardItem *SokratTree_RootItem_;
+
+
     bool dbIsOk_ = false;
+    bool dbItemOk = false;
 };
 
 #endif // SOKRAT3_DB_H

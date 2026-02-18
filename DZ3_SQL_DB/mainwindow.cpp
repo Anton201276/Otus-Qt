@@ -26,16 +26,16 @@ void MainWindow::on_action_ESC_Config_triggered()
     QString db_sokrat_path_file = QFileDialog::getOpenFileName(nullptr, "Найти System.stm","", "*.stm");
     qDebug() << "Path = " << db_sokrat_path_file;
     Sokrat3_DB sokratDB(db_sokrat_path_file);
-    QStringList list_names;
-    QStringList list_descs;
-    sokratDB.GetListModulesName(list_names);
-    sokratDB.GetListModulesDesc(list_descs);
+//    QStringList list_names;
+//    QStringList list_descs;
+//    sokratDB.GetListModulesName(list_names);
+//    sokratDB.GetListModulesDesc(list_descs);
 
-    QStringListModel *model_desc = new QStringListModel(list_descs);
-    QStringListModel *model_name = new QStringListModel(list_names);
+//    QStringListModel *model_desc = new QStringListModel(list_descs);
+//    QStringListModel *model_name = new QStringListModel(list_names);
 
-    ui->listView_desc->setModel(model_desc);
-    ui->listView_name->setModel(model_name);
+//    ui->listView_desc->setModel(model_desc);
+//    ui->listView_name->setModel(model_name);
 
     View_DB_Sokrat3* Form_DB_Sokrat3 = new View_DB_Sokrat3(nullptr, db_sokrat_path_file);
     Form_DB_Sokrat3->show();

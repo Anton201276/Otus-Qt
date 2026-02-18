@@ -2,7 +2,11 @@
 
 Sokrat3_DB::Sokrat3_DB(const QString db_path):
     db_path_(db_path){
-    CreateDB_FromFiles();
+    dbIsOk_ = CreateDB_FromFiles();
+
+    if (dbIsOk_) {
+        dbItemOk = CreateDB_ItemModels();
+    }
 }
 
 bool Sokrat3_DB::CreateDB_FromFiles() {
@@ -52,7 +56,6 @@ bool Sokrat3_DB::CreateDB_FromFiles() {
         qDebug() << "Ошибка открытия файла:" << system_file.errorString();
         ret = false;
     }
-
     return ret;
 }
 
@@ -184,11 +187,53 @@ bool Sokrat3_DB::ParseItemModule(SModulePropertiesDesc& module_properties, const
                 qDebug() << "номер строки = " << cnt_strings;
                 cnt_strings += 2;
             }
-            //cnt_strings++;
         }
     }
 
     cReadStrings = cnt_strings;
+
+    return ret;
+}
+
+bool Sokrat3_DB::CreateDB_ItemModels() {
+    bool ret = true;
+    SokratTree_ItemModel_ = new QStandardItemModel();
+    SokratTree_RootItem_ = new QStandardItem(sokrat_name_);
+    SokratTree_RootItem_->setRowCount(2);
+    QStandardItem* plantItem = new QStandardItem("Параметры изготовителя");
+    QStandardItem* userItem = new QStandardItem("Параметры пользователя");
+    SokratTree_RootItem_->setChild(0,0,plantItem);
+    SokratTree_RootItem_->setChild(1,0,userItem);
+    SokratTree_ItemModel_->appendRow(SokratTree_RootItem_);
+    SokratTree_ItemModel_->setHorizontalHeaderLabels({"База данных контроллера Сократ-3"});
+
+    for (auto it = modules_names_.begin(); it != modules_names_.begin() + CountPlantSokratModules; ++it) {
+        QStandardItem* moduleItem = new QStandardItem(list_modules_desc_[*it]);
+
+        //Параметры модуля
+        auto it_item = list_modules_params_.find(list_modules_desc_[*it]);
+        if (it_item != list_modules_params_.end()) {
+            QStandardItem* paramItem = new QStandardItem("Параметры");
+            moduleItem->appendRow(paramItem);
+        }
+
+        //Команды модуля
+        it_item = list_modules_commands_.find(list_modules_desc_[*it]);
+        if (it_item != list_modules_commands_.end()) {
+            QStandardItem* cmdItem = new QStandardItem("Команды");
+            moduleItem->appendRow(cmdItem);
+        }
+
+        //Сигналы модуля
+        it_item = list_modules_signals_.find(list_modules_desc_[*it]);
+        if (it_item != list_modules_signals_.end()) {
+            QStandardItem* sglItem = new QStandardItem("Сигналы");
+            moduleItem->appendRow(sglItem);
+        }
+        plantItem->appendRow(moduleItem);
+    }
+
+
 
     return ret;
 }

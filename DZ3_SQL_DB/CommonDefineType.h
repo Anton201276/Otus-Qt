@@ -63,5 +63,7 @@ struct SModuleDataBase {
     qint32 ModuleSignals_Number;
 };
 
+inline constexpr int CountPlantSokratModules = 9;
+
 
 #endif // COMMONDEFINETYPE_H

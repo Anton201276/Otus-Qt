@@ -20,8 +20,7 @@ public:
 
 private:
     Ui::View_DB_Sokrat3 *ui;
-    QStandardItemModel *model_;
-    QStandardItem *rootItem_;
+
 };
 
 #endif // DIALOG_DB_SOKRAT3_H
