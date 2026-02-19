@@ -7,6 +7,7 @@
 #include <QStringListModel>
 
 #include "sokrat3_db.h"
+#include "view_db_sokrat3.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,7 +28,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QStringListModel *modules_name_model_;
+    //QStringListModel *modules_name_model_;
+    View_DB_Sokrat3* Form_DB_Sokrat3_;
 
 };
 #endif // MAINWINDOW_H

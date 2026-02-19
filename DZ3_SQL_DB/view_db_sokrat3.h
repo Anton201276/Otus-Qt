@@ -6,6 +6,8 @@
 #include <QStandardItemModel>
 #include <QDebug>
 
+#include "sokrat3_db.h"
+
 namespace Ui {
 class View_DB_Sokrat3;
 }
@@ -20,6 +22,7 @@ public:
 
 private:
     Ui::View_DB_Sokrat3 *ui;
+    Sokrat3_DB *sokratDB_;
 
 };
 

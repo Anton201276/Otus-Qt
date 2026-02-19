@@ -7,12 +7,14 @@ View_DB_Sokrat3::View_DB_Sokrat3(QWidget *parent, QString Sokrat_desc_path) :
 {
     ui->setupUi(this);
 
+    sokratDB_ = new Sokrat3_DB(Sokrat_desc_path);
 
-
-    //ui->treeView->setModel(SokratTree_ItemModel_);
+    qDebug() << "+++ Show View_DB_Sokrat3 +++";
+    ui->treeView->setModel(sokratDB_->GetItemModel_SokratDB());
 }
 
 View_DB_Sokrat3::~View_DB_Sokrat3()
 {
     delete ui;
+    //delete sokratDB_;
 }

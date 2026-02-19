@@ -14,9 +14,12 @@ class Sokrat3_DB
 {
 public:
     Sokrat3_DB(const QString db_path);
+    ~Sokrat3_DB();
 
     void GetListModulesName(QStringList& list) const;
     void GetListModulesDesc(QStringList& list) const;
+
+    QStandardItemModel* GetItemModel_SokratDB();
 
     bool Get_DbIsOk() const;
 

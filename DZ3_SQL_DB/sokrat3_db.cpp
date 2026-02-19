@@ -5,8 +5,14 @@ Sokrat3_DB::Sokrat3_DB(const QString db_path):
     dbIsOk_ = CreateDB_FromFiles();
 
     if (dbIsOk_) {
+        qDebug() << " Create ItemModel Data Base ";
         dbItemOk = CreateDB_ItemModels();
     }
+}
+
+Sokrat3_DB::~Sokrat3_DB() {
+    delete SokratTree_ItemModel_;
+    delete SokratTree_RootItem_;
 }
 
 bool Sokrat3_DB::CreateDB_FromFiles() {
@@ -207,35 +213,49 @@ bool Sokrat3_DB::CreateDB_ItemModels() {
     SokratTree_ItemModel_->appendRow(SokratTree_RootItem_);
     SokratTree_ItemModel_->setHorizontalHeaderLabels({"База данных контроллера Сократ-3"});
 
-    for (auto it = modules_names_.begin(); it != modules_names_.begin() + CountPlantSokratModules; ++it) {
+    qDebug() << " Start load dataItems ";
+
+    for (auto it = modules_names_.begin(); it != modules_names_.end(); ++it) {
         QStandardItem* moduleItem = new QStandardItem(list_modules_desc_[*it]);
+        qDebug() << " Имя модуля - " << *it;
 
         //Параметры модуля
-        auto it_item = list_modules_params_.find(list_modules_desc_[*it]);
+        auto it_item = list_modules_params_.find(*it);
         if (it_item != list_modules_params_.end()) {
             QStandardItem* paramItem = new QStandardItem("Параметры");
             moduleItem->appendRow(paramItem);
+            qDebug() << " Load params module " << *it;
         }
 
         //Команды модуля
-        it_item = list_modules_commands_.find(list_modules_desc_[*it]);
+        it_item = list_modules_commands_.find(*it);
         if (it_item != list_modules_commands_.end()) {
             QStandardItem* cmdItem = new QStandardItem("Команды");
             moduleItem->appendRow(cmdItem);
+            qDebug() << " Load commands module " << *it;
         }
 
         //Сигналы модуля
-        it_item = list_modules_signals_.find(list_modules_desc_[*it]);
+        it_item = list_modules_signals_.find(*it);
         if (it_item != list_modules_signals_.end()) {
             QStandardItem* sglItem = new QStandardItem("Сигналы");
             moduleItem->appendRow(sglItem);
+            qDebug() << " Load signals module " << *it;
         }
-        plantItem->appendRow(moduleItem);
+
+        if (it < modules_names_.begin() + CountPlantSokratModules) {
+            plantItem->appendRow(moduleItem);
+        }
+        else {
+            userItem->appendRow(moduleItem);
+        }
     }
-
-
-
+    qDebug() << " Create finish Items Module ";
     return ret;
+}
+
+QStandardItemModel* Sokrat3_DB::GetItemModel_SokratDB() {
+    return SokratTree_ItemModel_;
 }
 
 /*

@@ -24,26 +24,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QListView" name="listView_name">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>10</y>
-      <width>256</width>
-      <height>531</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListView" name="listView_desc">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>10</y>
-      <width>256</width>
-      <height>531</height>
-     </rect>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
