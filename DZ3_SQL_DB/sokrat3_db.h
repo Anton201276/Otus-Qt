@@ -25,11 +25,13 @@ public:
 
 private:
     bool CreateDB_FromFiles();
-    bool CreateDB_ItemModels();
     bool ParseModuleDescFile(const QString& module_name);
-    //bool AddModuleProperties(QHash<QString,SModulePropertiesDesc>* ptrPropertyField, QStringList* ptrStrings_ModuleDesc, quint16 cReadStrings, quint16 numProperties);
-    //bool AddModuleParameters(const QString& module_name, const QStringList* ptrStrings_ModuleDesc, quint16& cReadStrings, quint16& numProperties);
     bool ParseItemModule(SModulePropertiesDesc& module_properties, const QStringList& ptrStrings_ModuleDesc, quint16& cReadStrings, quint16& numProperties);
+
+    void CreateDB_ItemModels();
+    void CreateDB_ItemTreeView();
+    void LoadModuleDB_ItemTableView();
+
 
 private:
 
@@ -45,12 +47,14 @@ private:
     QString module_properties_{};
     SModulePropertiesDesc module_properties_values_;
 
-    QStandardItemModel *SokratTree_ItemModel_;
-    QStandardItem *SokratTree_RootItem_;
+    QStandardItemModel* SokratTree_ItemModel_;
+    QStandardItem* SokratTree_RootItem_;
+    QHash<QString,QStandardItemModel>* tableItem_modules_params_;
+    QHash<QString,QStandardItemModel>* tableItem_modules_commands_;
+    QHash<QString,QStandardItemModel>* tableItem_modules_signals_;
 
 
     bool dbIsOk_ = false;
-    bool dbItemOk = false;
 };
 
 #endif // SOKRAT3_DB_H

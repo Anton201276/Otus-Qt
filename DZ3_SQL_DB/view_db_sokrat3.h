@@ -21,6 +21,9 @@ public:
     ~View_DB_Sokrat3();
 
 private:
+    void handlerItemClick_TreeView(const QModelIndex &index);
+
+private:
     Ui::View_DB_Sokrat3 *ui;
     Sokrat3_DB *sokratDB_;
 
