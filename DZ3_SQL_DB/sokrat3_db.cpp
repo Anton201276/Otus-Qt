@@ -10,31 +10,14 @@ Sokrat3_DB::Sokrat3_DB(const QString db_path):
 }
 
 Sokrat3_DB::~Sokrat3_DB() {
+    qDeleteAll(tableItem_modules_params_);  // Удаляет все QStandardItemModel* в хэше
+    tableItem_modules_params_.clear();
 
-    if (SokratTree_ItemModel_) {
-        delete SokratTree_ItemModel_;
-        SokratTree_ItemModel_ = nullptr;
-    }
+    qDeleteAll(tableItem_modules_commands_);  // Удаляет все QStandardItemModel* в хэше
+    tableItem_modules_commands_.clear();
 
-    if (SokratTree_RootItem_) {
-        delete SokratTree_RootItem_;
-        SokratTree_RootItem_ = nullptr;
-    }
-
-    if (tableItem_modules_params_) {
-        delete tableItem_modules_params_;
-        tableItem_modules_params_ = nullptr;
-    }
-
-    if (tableItem_modules_commands_) {
-        delete tableItem_modules_commands_;
-        tableItem_modules_commands_ = nullptr;
-    }
-
-    if (tableItem_modules_signals_) {
-        delete tableItem_modules_signals_;
-        tableItem_modules_signals_ = nullptr;
-    }
+    qDeleteAll(tableItem_modules_signals_);  // Удаляет все QStandardItemModel* в хэше
+    tableItem_modules_signals_.clear();
 }
 
 bool Sokrat3_DB::CreateDB_FromFiles() {
@@ -214,17 +197,16 @@ bool Sokrat3_DB::ParseItemModule(SModulePropertiesDesc& module_properties, const
 
 void Sokrat3_DB::CreateDB_ItemModels() {
 
-    SokratTree_ItemModel_ = new QStandardItemModel();
-    SokratTree_RootItem_ = new QStandardItem(sokrat_name_);
-    SokratTree_RootItem_->setRowCount(2);
+    SokratTree_RootItem_.setText(sokrat_name_);
+    SokratTree_RootItem_.setRowCount(2);
 
     CreateDB_ItemTreeView();
-    LoadModuleDB_ItemTableView();
+    CreateDB_ModuleItemTableView();
 
     return;
 }
 
-QStandardItemModel* Sokrat3_DB::GetItemModel_SokratDB() {
+QStandardItemModel& Sokrat3_DB::GetItemModel_SokratDB() {
     return SokratTree_ItemModel_;
 }
 
@@ -232,10 +214,10 @@ void Sokrat3_DB::CreateDB_ItemTreeView() {
 
     QStandardItem* plantItem = new QStandardItem("Параметры изготовителя");
     QStandardItem* userItem = new QStandardItem("Параметры пользователя");
-    SokratTree_RootItem_->setChild(0,0,plantItem);
-    SokratTree_RootItem_->setChild(1,0,userItem);
-    SokratTree_ItemModel_->appendRow(SokratTree_RootItem_);
-    SokratTree_ItemModel_->setHorizontalHeaderLabels({"База данных контроллера Сократ-3"});
+    SokratTree_RootItem_.setChild(0,0,plantItem);
+    SokratTree_RootItem_.setChild(1,0,userItem);
+    SokratTree_ItemModel_.appendRow(&SokratTree_RootItem_);
+    SokratTree_ItemModel_.setHorizontalHeaderLabels({"База данных контроллера Сократ-3"});
 
     for (auto it = modules_names_.begin(); it != modules_names_.end(); ++it) {
         QStandardItem* moduleItem = new QStandardItem(list_modules_desc_[*it]);
@@ -277,10 +259,57 @@ void Sokrat3_DB::CreateDB_ItemTreeView() {
     }
 }
 
-void Sokrat3_DB::LoadModuleDB_ItemTableView(){
-    //QStandardItem tmpIt
+void Sokrat3_DB::LoadDB_ModuleItemTableView(EModuleFields property){
 
-    //for (auto itr = list_modules_params_.begin(); itr != list_modules_params_.end(); ++itr) {
-    //    qint8
-    //}
+    QHash<QString, SModulePropertiesDesc>::iterator it_begin;
+    QHash<QString,SModulePropertiesDesc>::iterator it_end;
+
+    if (property == EModuleFields::PARAMS) {
+        it_begin = list_modules_params_.begin();
+        it_end = list_modules_params_.end();
+    }
+    else if (property == EModuleFields::SIGNALS) {
+        it_begin = list_modules_signals_.begin();
+        it_end = list_modules_signals_.end();
+    }
+    else {
+        it_begin = list_modules_commands_.begin();
+        it_end = list_modules_commands_.end();
+    }
+
+
+    for (auto itr = it_begin; itr != it_end; ++itr) {
+        qint8 cProp = itr->cProperties;
+
+        for (int row = 0; row < cProp; ++row) {
+            for (int col = 0; col < 6; ++col) {
+                QStandardItem *item = new QStandardItem(QString("R%0C%1").arg(row).arg(col));
+                switch (col) {
+                    case 0:
+                        //item->setData(itr->NameProperties,Qt::UserRole);
+                        item->setText(itr->NameProperties[col]);
+                        break;
+                    case 1:
+                        item->setData(itr->Address[row],Qt::UserRole);
+                        break;
+                    case 2:
+                        item->setData(itr->,Qt::UserRole);
+                        break;
+                    case 3:
+                        item->setData(itr->Address[row],Qt::UserRole);
+                        break;
+                    case 4:
+                        item->setData(itr->NameProperties,Qt::UserRole);
+                        break;
+                    case 5:
+                        item->setData(itr->Address[row],Qt::UserRole);
+                        break;
+
+                }
+                tableItem_modules_params_[itr.key()] = new QStandardItemModel();
+                tableItem_modules_params_[itr.key()]->setItem(row, col, item);
+            }
+        }
+    }
 }
+

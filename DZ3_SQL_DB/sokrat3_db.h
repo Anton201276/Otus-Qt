@@ -19,7 +19,7 @@ public:
     void GetListModulesName(QStringList& list) const;
     void GetListModulesDesc(QStringList& list) const;
 
-    QStandardItemModel* GetItemModel_SokratDB();
+    QStandardItemModel& GetItemModel_SokratDB();
 
     bool Get_DbIsOk() const;
 
@@ -30,7 +30,8 @@ private:
 
     void CreateDB_ItemModels();
     void CreateDB_ItemTreeView();
-    void LoadModuleDB_ItemTableView();
+    void CreateDB_ModuleItemTableView();
+    void LoadDB_ModuleItemTableView(EModuleFields property);
 
 
 private:
@@ -47,11 +48,11 @@ private:
     QString module_properties_{};
     SModulePropertiesDesc module_properties_values_;
 
-    QStandardItemModel* SokratTree_ItemModel_;
-    QStandardItem* SokratTree_RootItem_;
-    QHash<QString,QStandardItemModel>* tableItem_modules_params_;
-    QHash<QString,QStandardItemModel>* tableItem_modules_commands_;
-    QHash<QString,QStandardItemModel>* tableItem_modules_signals_;
+    QStandardItemModel SokratTree_ItemModel_;
+    QStandardItem SokratTree_RootItem_;
+    QHash<QString,QStandardItemModel*> tableItem_modules_params_;
+    QHash<QString,QStandardItemModel*> tableItem_modules_commands_;
+    QHash<QString,QStandardItemModel*> tableItem_modules_signals_;
 
 
     bool dbIsOk_ = false;

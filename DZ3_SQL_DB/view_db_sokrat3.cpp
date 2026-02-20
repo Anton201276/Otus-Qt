@@ -10,7 +10,7 @@ View_DB_Sokrat3::View_DB_Sokrat3(QWidget *parent, QString Sokrat_desc_path) :
     sokratDB_ = new Sokrat3_DB(Sokrat_desc_path);
 
     //qDebug() << "+++ Show View_DB_Sokrat3 +++";
-    ui->treeView->setModel(sokratDB_->GetItemModel_SokratDB());
+    ui->treeView->setModel(&sokratDB_->GetItemModel_SokratDB());
 
     connect(ui->treeView, &QTreeView::clicked, this, &View_DB_Sokrat3::handlerItemClick_TreeView);
 }
@@ -25,15 +25,15 @@ void View_DB_Sokrat3::handlerItemClick_TreeView(const QModelIndex &index) {
 
     if (!index.isValid()) return;
 
-    QVariant userData = sokratDB_->GetItemModel_SokratDB()->data(index, Qt::UserRole);
+    QVariant userData = sokratDB_->GetItemModel_SokratDB().data(index, Qt::UserRole);
 
 //    QString text = sokratDB_->GetItemModel_SokratDB()->data(index, Qt::DisplayRole).toString();
 //        int row = index.row();
 //        int col = index.column();
 
         if (userData.isValid()) {
-            QString text_mdl = sokratDB_->GetItemModel_SokratDB()->data(index, Qt::UserRole).toString();
-            QString text_prop = sokratDB_->GetItemModel_SokratDB()->data(index, Qt::DisplayRole).toString();
+            QString text_mdl = sokratDB_->GetItemModel_SokratDB().data(index, Qt::UserRole).toString();
+            QString text_prop = sokratDB_->GetItemModel_SokratDB().data(index, Qt::DisplayRole).toString();
             qDebug() << "Клик на элементе: " << text_mdl << " - " << text_prop;
         }
 }

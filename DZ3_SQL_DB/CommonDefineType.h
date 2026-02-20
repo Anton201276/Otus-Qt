@@ -51,8 +51,15 @@ struct SModulePropertiesDesc {
     QVector<qint32> InitValue;
     QVector<qint32> MinValue;
     QVector<qint32> MaxValue;
-    //QVector<quint32> RealValue;
-    //QVector<quint32> NewValue;
+};
+
+struct SModuleRowPropertiesDesc {
+    quint32 Address;
+    QString NameProperties;
+    EDescDataType enDBTypes;
+    qint32 InitValue;
+    qint32 MinValue;
+    qint32 MaxValue;
 };
 
 struct SModuleDataBase {
