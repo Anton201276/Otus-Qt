@@ -14,17 +14,18 @@ public:
     explicit Control_DB(QObject *parent = nullptr);
 
 public slots:
-    void Slot_GetPathSystemFile(QString path);
-    void Slot_GetModuleNameField(QString moduleName, EModuleFields field);
+    void Slot_CreateDBFromFiles(const QString& path);
+    void Slot_GiveDB_TreeViewModel();
+    void Slot_GiveDB_ModuleTableModel(const QString& moduleName, EModuleFields field);
 
 signals:
-    void Signal_RootItemModel(QStandardItem* rootModel);
-    void Signal_PropertiesItemModel(QStandardItem* propertiesModel);
+    void Signal_GetDB_TreeViewModel(QStandardItemModel* rootModel);
+    void Signal_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
 
 private:
     Sokrat3_DB* mySokratDB_;
-    QStandardItem* rootModel_;
-    QStandardItem* modulePropertiesModel_;
+    //QStandardItem* rootModel_;
+    //QStandardItem* modulePropertiesModel_;
 };
 
 #endif // CONTROL_DB_H

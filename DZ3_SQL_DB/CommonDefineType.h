@@ -4,7 +4,9 @@
 #include <QString>
 #include <QVector>
 #include <QList>
+#include <QHash>
 #include <QStringList>
+#include <QtGlobal>
 
 struct SokratSoftWareVersionDesc {
     QString software_name;
@@ -43,7 +45,6 @@ enum class EModuleFields {
 
 struct SModulePropertiesDesc {
     quint8 cProperties;
-    QVector<quint32> Address;
     QStringList NameProperties;
     QVector<EDescDataType> enDBTypes;
     QVector<quint16> usBits;
@@ -51,26 +52,52 @@ struct SModulePropertiesDesc {
     QVector<qint32> InitValue;
     QVector<qint32> MinValue;
     QVector<qint32> MaxValue;
+	QVector<quint32> Address;
 };
 
-struct SModuleRowPropertiesDesc {
-    quint32 Address;
-    QString NameProperties;
+inline constexpr quint8 ID_Prop_Desc = 0;
+inline constexpr quint8 ID_Prop_enDBTypes = 1;
+inline constexpr quint8 ID_Prop_Bits = 2;
+inline constexpr quint8 ID_Prop_NameBits = 3;
+inline constexpr quint8 ID_Prop_InitValue = 4;
+inline constexpr quint8 ID_Prop_MinValue = 5;
+inline constexpr quint8 ID_Prop_MaxValue = 6;
+inline constexpr quint8 ID_Prop_Address = 7;
+
+struct SPropertyDesc {
+    QString Desc;
     EDescDataType enDBTypes;
+    quint16 Bits;
+    QStringList NameBits;
     qint32 InitValue;
     qint32 MinValue;
     qint32 MaxValue;
+    quint32 Address;
 };
 
 struct SModuleDataBase {
-    QString ModuleName;
-    QString ModuleDesc;
-    qint32 ModuleParams_Number;
-    qint32 ModuleCommands_Number;
-    qint32 ModuleSignals_Number;
+    QHash<QString,QVector<SPropertyDesc>> hash_modules_params;
+    QHash<QString,QVector<SPropertyDesc>> hash_modules_commands;
+    QHash<QString,QVector<SPropertyDesc>> hash_modules_signals;
 };
 
 inline constexpr int CountPlantSokratModules = 9;
+inline constexpr int stringNumber_SysModulName = 9;
+inline constexpr int stringNumber_MdlCountProperty = 4;
+inline constexpr int Count_Column_Table = 6;
+
+inline const QString String_Params = "Параметры";
+inline const QString String_Commands = "Команды";
+inline const QString String_Signals = "Сигналы";
+
+//struct SModuleRowPropertiesDesc {
+//    QString NameProperties;
+//    EDescDataType enDBTypes;
+//    qint32 InitValue;
+//    qint32 MinValue;
+//    qint32 MaxValue;
+//    quint32 Address;
+//};
 
 
 #endif // COMMONDEFINETYPE_H

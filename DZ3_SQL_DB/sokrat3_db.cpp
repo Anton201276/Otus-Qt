@@ -1,12 +1,8 @@
 #include "sokrat3_db.h"
 
-Sokrat3_DB::Sokrat3_DB(const QString db_path):
-    db_path_(db_path){
-    dbIsOk_ = CreateDB_FromFiles();
-
-    if (dbIsOk_) {
-        CreateDB_ItemModels();
-    }
+Sokrat3_DB::Sokrat3_DB(const QString db_path): db_path_(db_path){
+    SModuleDataBase SDataBase;
+    dbIsOk_ = CreateItemModelDB_FromFiles(SDataBase);
 }
 
 Sokrat3_DB::~Sokrat3_DB() {
@@ -20,16 +16,17 @@ Sokrat3_DB::~Sokrat3_DB() {
     tableItem_modules_signals_.clear();
 }
 
-bool Sokrat3_DB::CreateDB_FromFiles() {
-    bool ret=true;
+
+bool Sokrat3_DB::CreateItemModelDB_FromFiles(SModuleDataBase& db_mdl){
+
+    bool ret = true;
     QFile system_file(db_path_);
 
     if (QFile::exists(db_path_) && system_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         // Читаем данные
         qint16 cRead_string = 0;
         qint16 cModules = 0;
-        //qint16 numberStringCountModule = 11;
-        qint16 numberStringNameModule = 9;
+        qint16 numberStringNameModule = stringNumber_SysModulName;
         QString read_string;
         QString name_string;
 
@@ -38,21 +35,27 @@ bool Sokrat3_DB::CreateDB_FromFiles() {
         sokrat_name_ = system_file.readLine();
         sokrat_name_ = sokrat_name_.trimmed();
         cRead_string++;
+
         read_string = system_file.readLine();
         read_string = read_string.trimmed();
+        sokrat_name_ += "_v" + read_string;
         cRead_string++;
 
-        sokrat_name_ += "_v" + read_string;
-        //qDebug() << "System name - " << sokrat_name_;
+        read_string = system_file.readLine();
+        cRead_string++;
+
+        read_string = system_file.readLine();
+        read_string = read_string.trimmed();
+        sokrat_date_ = read_string;
+        cRead_string++;
 
         while ((read_string = system_file.readLine()) != NULL) {
             cRead_string++;
             if (cRead_string == numberStringNameModule) {
                 name_string = read_string.trimmed();
                 modules_names_ << name_string;
-                //qDebug() << "Modules name - " << name_string;
 
-                ret = ParseModuleDescFile(name_string);
+                ret = ParseModuleDescFile(name_string, db_mdl);
                 if (!ret) {
                     break;
                 }
@@ -67,6 +70,10 @@ bool Sokrat3_DB::CreateDB_FromFiles() {
         //qDebug() << "Ошибка открытия файла:" << system_file.errorString();
         ret = false;
     }
+
+    //Создаем ItemData для Представлений
+    CreateDB_ItemModels(db_mdl);
+
     return ret;
 }
 
@@ -86,20 +93,16 @@ bool Sokrat3_DB::Get_DbIsOk() const {
     return dbIsOk_;
 }
 
-bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
-    bool ret=true;
+bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module, SModuleDataBase& db_mdl) {
+    bool ret = true;
+
     QString module_path = db_path_.remove("System.stm") + "Modules/" + name_module + ".mdl";
-    //qDebug() << "ParseModuleDesc desc = " << module_path;
     QFile module_file(module_path);
     QTextStream text_stream(&module_file);
     text_stream.setCodec("Windows-1251");
 
-    const quint16 num_string_module_name = 0;
-    const quint16 num_string_module_paramas = 4;
-
     if (QFile::exists(module_path) && module_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        quint16 cRead_string = num_string_module_name;
-        //QString read_string;
+        quint16 cRead_string = 0;
         QStringList allStrings_ModuleDesc;
 
         while(!text_stream.atEnd()) {
@@ -107,21 +110,17 @@ bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
         }
 
         list_modules_desc_[name_module] = allStrings_ModuleDesc[cRead_string];
-        //read_string = read_string.trimmed();
-        //qDebug() << "Название модуля = " << list_modules_desc_[name_module];
-        //cRead_string++;
 
-        cRead_string = num_string_module_paramas;
-        SModulePropertiesDesc module_properties;
+        cRead_string = stringNumber_MdlCountProperty;
+        QVector<SPropertyDesc> module_properties;
         quint16 number_prop = 0;
 
 
         //Параметры модуля
         number_prop = allStrings_ModuleDesc[cRead_string].toInt();
         if (number_prop > 0) {
-            ParseItemModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
-            list_modules_params_[name_module] = std::move(module_properties);
-            //qDebug() << "Считали параметры";
+            ParsePropertiesModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
+            db_mdl.hash_modules_params[name_module] = std::move(module_properties);
         }
         else {
             cRead_string++;
@@ -130,9 +129,8 @@ bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
         //Команды модуля
         number_prop = allStrings_ModuleDesc[cRead_string].toInt();
         if (number_prop > 0) {
-            ParseItemModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
-            list_modules_commands_[name_module] = std::move(module_properties);
-            //qDebug() << "Считали команды";
+            ParsePropertiesModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
+            db_mdl.hash_modules_commands[name_module] = std::move(module_properties);
         }
         else {
             cRead_string++;
@@ -141,9 +139,8 @@ bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
         //Сигналы модуля
         number_prop = allStrings_ModuleDesc[cRead_string].toInt();
         if (number_prop > 0) {
-            ParseItemModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
-            list_modules_signals_[name_module] = std::move(module_properties);
-            //qDebug() << "Считали сигналы";
+            ParsePropertiesModule(module_properties, allStrings_ModuleDesc, cRead_string, number_prop);
+            db_mdl.hash_modules_signals[name_module] = std::move(module_properties);
         }
         else {
             cRead_string++;
@@ -158,62 +155,60 @@ bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module) {
     return ret;
 }
 
-bool Sokrat3_DB::ParseItemModule(SModulePropertiesDesc& module_properties, const QStringList& strings_ModuleDesc, quint16& cReadStrings, quint16& numProperties) {
+bool Sokrat3_DB::ParsePropertiesModule(QVector<SPropertyDesc>& module_properties, const QStringList& strings_ModuleDesc, quint16& cReadStrings, quint16& numProperties){
     bool ret = true;
-    module_properties.cProperties = numProperties;
-    quint16 cnt_strings  = cReadStrings + 1;
+    cReadStrings++;
 
     for(quint16 j = 0; j < numProperties; ++j) {
-        module_properties.Address.push_back(j);
-        module_properties.NameProperties << strings_ModuleDesc[cnt_strings++];
-        cnt_strings++;
+        SPropertyDesc tmpDesc;
+        tmpDesc.Address = j + 100;
+        tmpDesc.Desc = strings_ModuleDesc[cReadStrings++];
+        cReadStrings++;
 
-        if (strings_ModuleDesc[cnt_strings] == "U2" || strings_ModuleDesc[cnt_strings] == "I2") {
-            module_properties.usBits.push_back(0);
-            module_properties.enDBTypes.push_back(strings_ModuleDesc[++cnt_strings] == "U2" ? EDescDataType::bdtUnsigned : EDescDataType::bdtSigned);
-            module_properties.InitValue.push_back((strings_ModuleDesc[++cnt_strings]).toInt());
-            module_properties.MinValue.push_back((strings_ModuleDesc[++cnt_strings]).toInt());
-            module_properties.MaxValue.push_back((strings_ModuleDesc[++cnt_strings]).toInt());
-            cnt_strings++;
+        if (strings_ModuleDesc[cReadStrings] == "U2" || strings_ModuleDesc[cReadStrings] == "I2") {
+            tmpDesc.Bits = 0;
+            tmpDesc.enDBTypes = strings_ModuleDesc[cReadStrings++] == "U2" ? EDescDataType::bdtUnsigned : EDescDataType::bdtSigned;
+            tmpDesc.InitValue = (strings_ModuleDesc[cReadStrings++]).toInt();
+            tmpDesc.MinValue = (strings_ModuleDesc[cReadStrings++]).toInt();
+            tmpDesc.MaxValue = (strings_ModuleDesc[cReadStrings++]).toInt();
+            cReadStrings++;
         }
         else {
-            module_properties.enDBTypes.push_back(EDescDataType::bdtBin);
-            module_properties.InitValue.push_back((strings_ModuleDesc[++cnt_strings]).toUInt());
-            module_properties.MinValue.push_back(0);
-            module_properties.MaxValue.push_back(65535);
-            quint16 numBits = (strings_ModuleDesc[++cnt_strings]).toUInt();
-            module_properties.usBits.push_back(numBits);
-            cnt_strings += 2;
+            tmpDesc.enDBTypes = EDescDataType::bdtBin;
+            tmpDesc.InitValue = (strings_ModuleDesc[++cReadStrings]).toUInt();
+            tmpDesc.MinValue = 0;
+            tmpDesc.MaxValue = 65535;
+            quint16 numBits = (strings_ModuleDesc[++cReadStrings]).toUInt();
+            tmpDesc.Bits = numBits;
+            cReadStrings += 2;
             for (quint16 j = 0; j < numBits; ++j) {
-                module_properties.NameBits << strings_ModuleDesc[cnt_strings];
-                cnt_strings += 2;
+                tmpDesc.NameBits << strings_ModuleDesc[cReadStrings];
+                cReadStrings += 2;
             }
         }
+        module_properties.push_back(std::move(tmpDesc));
     }
-
-    cReadStrings = cnt_strings;
     return ret;
 }
 
-void Sokrat3_DB::CreateDB_ItemModels() {
+void Sokrat3_DB::CreateDB_ItemModels(const SModuleDataBase& db_mdl) {
 
     SokratTree_RootItem_.setText(sokrat_name_);
     SokratTree_RootItem_.setRowCount(2);
 
-    CreateDB_ItemTreeView();
-    CreateDB_ModuleItemTableView();
+    CreateDB_ItemTreeView(db_mdl);
 
     return;
 }
 
-QStandardItemModel& Sokrat3_DB::GetItemModel_SokratDB() {
-    return SokratTree_ItemModel_;
+QStandardItemModel* Sokrat3_DB::GetItemModel_SokratDB() {
+    return &SokratTree_ItemModel_;
 }
 
-void Sokrat3_DB::CreateDB_ItemTreeView() {
+void Sokrat3_DB::CreateDB_ItemTreeView(const SModuleDataBase& db_mdl) {
 
-    QStandardItem* plantItem = new QStandardItem("Параметры изготовителя");
-    QStandardItem* userItem = new QStandardItem("Параметры пользователя");
+    QStandardItem* plantItem = new QStandardItem("Настройки изготовителя");
+    QStandardItem* userItem = new QStandardItem("Настройки пользователя");
     SokratTree_RootItem_.setChild(0,0,plantItem);
     SokratTree_RootItem_.setChild(1,0,userItem);
     SokratTree_ItemModel_.appendRow(&SokratTree_RootItem_);
@@ -221,33 +216,32 @@ void Sokrat3_DB::CreateDB_ItemTreeView() {
 
     for (auto it = modules_names_.begin(); it != modules_names_.end(); ++it) {
         QStandardItem* moduleItem = new QStandardItem(list_modules_desc_[*it]);
-        //qDebug() << " Имя модуля - " << *it;
 
         //Параметры модуля
-        auto it_item = list_modules_params_.find(*it);
-        if (it_item != list_modules_params_.end()) {
-            QStandardItem* paramItem = new QStandardItem("Параметры");
-            paramItem->setData(*it,Qt::UserRole);
+        auto it_item = db_mdl.hash_modules_params.find(*it);
+        if (it_item != db_mdl.hash_modules_params.end()) {
+            QStandardItem* paramItem = new QStandardItem(String_Params);
+            paramItem->setData(*it, Qt::UserRole);
             moduleItem->appendRow(paramItem);
-            //qDebug() << " Load params module " << *it;
+            LoadDB_ModuleItemTableView(*it, EModuleFields::PARAMS, db_mdl.hash_modules_params[*it]);
         }
 
         //Команды модуля
-        it_item = list_modules_commands_.find(*it);
-        if (it_item != list_modules_commands_.end()) {
-            QStandardItem* cmdItem = new QStandardItem("Команды");
+        it_item = db_mdl.hash_modules_commands.find(*it);
+        if (it_item != db_mdl.hash_modules_commands.end()) {
+            QStandardItem* cmdItem = new QStandardItem(String_Commands);
             cmdItem->setData(*it,Qt::UserRole);
             moduleItem->appendRow(cmdItem);
-            //qDebug() << " Load commands module " << *it;
+            LoadDB_ModuleItemTableView(*it, EModuleFields::COMMANDS, db_mdl.hash_modules_commands[*it]);
         }
 
         //Сигналы модуля
-        it_item = list_modules_signals_.find(*it);
-        if (it_item != list_modules_signals_.end()) {
-            QStandardItem* signalItem = new QStandardItem("Сигналы");
+        it_item = db_mdl.hash_modules_signals.find(*it);
+        if (it_item != db_mdl.hash_modules_signals.end()) {
+            QStandardItem* signalItem = new QStandardItem(String_Signals);
             signalItem->setData(*it,Qt::UserRole);
             moduleItem->appendRow(signalItem);
-            //qDebug() << " Load signals module " << *it;
+            LoadDB_ModuleItemTableView(*it, EModuleFields::SIGNALS,  db_mdl.hash_modules_signals[*it]);
         }
 
         if (it < modules_names_.begin() + CountPlantSokratModules) {
@@ -259,57 +253,82 @@ void Sokrat3_DB::CreateDB_ItemTreeView() {
     }
 }
 
-void Sokrat3_DB::LoadDB_ModuleItemTableView(EModuleFields property){
+void Sokrat3_DB::LoadDB_ModuleItemTableView(const QString& mdl, EModuleFields field, const QVector<SPropertyDesc>& mdl_prop){
 
-    QHash<QString, SModulePropertiesDesc>::iterator it_begin;
-    QHash<QString,SModulePropertiesDesc>::iterator it_end;
+    QStandardItemModel* model = new QStandardItemModel();
+    model->setColumnCount(Count_Column_Table);
+    model->setHorizontalHeaderLabels({"Имя", "Тип", "Начальное", "Минимальное", "Максимальное", "Адрес регистра"});
 
-    if (property == EModuleFields::PARAMS) {
-        it_begin = list_modules_params_.begin();
-        it_end = list_modules_params_.end();
+    for (int row = 0; row < mdl_prop.size(); ++row) {
+        QList<QStandardItem*> rowProprties = LoadDB_RowProperties(mdl_prop[row]);
+        model->appendRow(rowProprties);
     }
-    else if (property == EModuleFields::SIGNALS) {
-        it_begin = list_modules_signals_.begin();
-        it_end = list_modules_signals_.end();
+
+    if (field == EModuleFields::PARAMS) {
+        tableItem_modules_params_.insert(mdl, model);
+    }
+    else if (field == EModuleFields::COMMANDS) {
+        tableItem_modules_commands_.insert(mdl, model);
     }
     else {
-        it_begin = list_modules_commands_.begin();
-        it_end = list_modules_commands_.end();
-    }
-
-
-    for (auto itr = it_begin; itr != it_end; ++itr) {
-        qint8 cProp = itr->cProperties;
-
-        for (int row = 0; row < cProp; ++row) {
-            for (int col = 0; col < 6; ++col) {
-                QStandardItem *item = new QStandardItem(QString("R%0C%1").arg(row).arg(col));
-                switch (col) {
-                    case 0:
-                        //item->setData(itr->NameProperties,Qt::UserRole);
-                        item->setText(itr->NameProperties[col]);
-                        break;
-                    case 1:
-                        item->setData(itr->Address[row],Qt::UserRole);
-                        break;
-                    case 2:
-                        item->setData(itr->,Qt::UserRole);
-                        break;
-                    case 3:
-                        item->setData(itr->Address[row],Qt::UserRole);
-                        break;
-                    case 4:
-                        item->setData(itr->NameProperties,Qt::UserRole);
-                        break;
-                    case 5:
-                        item->setData(itr->Address[row],Qt::UserRole);
-                        break;
-
-                }
-                tableItem_modules_params_[itr.key()] = new QStandardItemModel();
-                tableItem_modules_params_[itr.key()]->setItem(row, col, item);
-            }
-        }
+        tableItem_modules_signals_.insert(mdl, model);
     }
 }
 
+QList<QStandardItem*> Sokrat3_DB::LoadDB_RowProperties(const SPropertyDesc& sprop) {
+    QList<QStandardItem*> rowList;
+
+    QStandardItem* item_desc = new QStandardItem(sprop.Desc);
+    rowList << item_desc;
+
+    QString datatype;
+    if (sprop.enDBTypes == EDescDataType::bdtBin) {
+        datatype = "Bits";
+    }
+    else if (sprop.enDBTypes == EDescDataType::bdtSigned) {
+        datatype = "Int";
+    }
+    else {
+        datatype = "UInt";
+    }
+
+    QStandardItem* item_DBType = new QStandardItem(datatype);
+    rowList << item_DBType;
+
+    QStandardItem* item_init = new QStandardItem();
+    if (sprop.enDBTypes == EDescDataType::bdtBin) {
+        item_init->setData(sprop.NameBits, Qt::ToolTipRole);
+    }
+    item_init->setData(sprop.InitValue, Qt::DisplayRole);
+    rowList << item_init;
+
+    QStandardItem* item_min = new QStandardItem();
+    item_min->setData(sprop.MinValue, Qt::DisplayRole);
+    rowList << item_min;
+
+    QStandardItem* item_max = new QStandardItem();
+    item_max->setData(sprop.MaxValue, Qt::DisplayRole);
+    rowList << item_max;
+
+    QStandardItem* item_adr = new QStandardItem();
+    item_adr->setData(sprop.Address, Qt::DisplayRole);
+    rowList << item_adr;
+
+    return rowList;
+}
+
+QStandardItemModel* Sokrat3_DB::GetItemModel_ModuleProperties(const QString& mdl, EModuleFields prop) {
+    QStandardItemModel* ret = nullptr;
+
+    if (prop == EModuleFields::PARAMS) {
+        ret = tableItem_modules_params_.find(mdl) != tableItem_modules_params_.end() ? tableItem_modules_params_[mdl] : nullptr;
+    }
+    else if (prop == EModuleFields::COMMANDS) {
+        ret = tableItem_modules_commands_.find(mdl) != tableItem_modules_commands_.end() ? tableItem_modules_commands_[mdl] : nullptr;
+    }
+    else {
+        ret = tableItem_modules_signals_.find(mdl) != tableItem_modules_signals_.end() ? tableItem_modules_signals_[mdl] : nullptr;
+    }
+
+    return ret;
+}

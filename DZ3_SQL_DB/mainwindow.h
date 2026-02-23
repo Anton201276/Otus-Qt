@@ -21,9 +21,23 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void Slot_GiveDB_TreeViewModel(QStandardItemModel* rootModel);
+    void Slot_GiveDB_ModuleTableModel(QStandardItemModel* propertiesModel);
+
+    void Slot_ShowDB_TreeViewModel();
+    void Slot_ShowDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
+
+signals:
+    void Signal_CreateDBFromFiles(const QString& path);
+    void Signal_GiveDB_TreeViewModel();
+    void Signal_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
+
+    void Signal_ShowDB_TreeViewModel(QStandardItemModel* rootModel);
+    void Signal_ShowDB_ModuleTableModel(QStandardItemModel* propertiesModel);
+
 private slots:
     void on_action_exit_app_triggered();
-
     void on_action_ESC_Config_triggered();
 
 private:
