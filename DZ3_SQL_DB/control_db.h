@@ -15,11 +15,12 @@ public:
 
 public slots:
     void Slot_CreateDBFromFiles(const QString& path);
-    void Slot_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
+    //void Slot_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
 
 signals:
     void Signal_GetDB_TreeViewModel(QStandardItemModel* rootModel);
     void Signal_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
+    void Signal_GetDB_SokratDBModel(Sokrat3_DB* sokratDB);
 
 private:
     Sokrat3_DB* mySokratDB_;

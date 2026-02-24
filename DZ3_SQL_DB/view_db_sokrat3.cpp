@@ -9,47 +9,39 @@ View_DB_Sokrat3::View_DB_Sokrat3(QWidget *parent) :
     connect(ui->treeView, &QTreeView::clicked, this, &View_DB_Sokrat3::handlerItemClick_TreeView);
 }
 
-
-
 View_DB_Sokrat3::~View_DB_Sokrat3()
 {
     delete ui;
 }
 
-void View_DB_Sokrat3::SetDB_TreeViewModel(QStandardItemModel* rootModel) {
-    ui->treeView->setModel(rootModel);
-}
-
-void View_DB_Sokrat3::SetDB_ModuleTableModel(QStandardItemModel* propertiesModel){
-    ui->tableView->setModel(propertiesModel);
+void View_DB_Sokrat3::SetDB_SokratDB(Sokrat3_DB* mySokratDB) {
+    mySokratDB_ = mySokratDB;
+    treeDBModel_ = mySokratDB_->GetItemModel_SokratDB();
+    ui->treeView->setModel(treeDBModel_);
 }
 
 void View_DB_Sokrat3::handlerItemClick_TreeView(const QModelIndex &index) {
 
     if (!index.isValid()) return;
 
-    qDebug() << "Клик на элементе: " << index.row() << " - " << index.column();
+    QVariant userData = treeDBModel_->data(index, Qt::UserRole);
 
-    //QVariant userData = sokratDB_->GetItemModel_SokratDB().data(index, Qt::UserRole);
+        if (userData.isValid()) {
+            QStandardItemModel* tableDBModel;
+            QString text_mdl = treeDBModel_->data(index, Qt::UserRole).toString();
+            QString text_prop = treeDBModel_->data(index, Qt::DisplayRole).toString();
 
-//        if (userData.isValid()) {
-//            QString text_mdl = sokratDB_->GetItemModel_SokratDB().data(index, Qt::UserRole).toString();
-//            QString text_prop = sokratDB_->GetItemModel_SokratDB().data(index, Qt::DisplayRole).toString();
-//            qDebug() << "Клик на элементе: " << text_mdl << " - " << text_prop;
-
-//            if (text_prop == String_Params) {
-//                ui->tableView->setModel(sokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::PARAMS));
-//                qDebug() << "Size row = " << sokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::PARAMS)->rowCount();
-//            }
-//            else if (text_prop == String_Commands) {
-//                ui->tableView->setModel(sokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::COMMANDS));
-//                qDebug() << "Size row = " << sokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::PARAMS)->rowCount();
-//            }
-//            else {
-//                ui->tableView->setModel(sokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::SIGNALS));
-//                qDebug() << "Size row = " << sokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::PARAMS)->rowCount();
-//            }
-//        }
+            if (text_prop == String_Params) {
+                tableDBModel = mySokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::PARAMS);
+            }
+            else if (text_prop == String_Commands) {
+                tableDBModel = mySokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::COMMANDS);
+            }
+            else {
+                tableDBModel = mySokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::SIGNALS);
+            }
+            ui->tableView->setModel(tableDBModel);
+        }
 //        else {
 //            QString text_prop = sokratDB_->GetItemModel_SokratDB().data(index, Qt::DisplayRole).toString();
 //            qDebug() << "Item Text = " << text_prop << "\n";

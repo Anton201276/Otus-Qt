@@ -22,13 +22,14 @@ public:
     ~MainWindow();
 
 public slots:
-    void Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel);
-    void Slot_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
-    void Slot_ShowDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
+    //void Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel);
+    //void Slot_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
+    void Slot_GetDB_SokratDBModel(Sokrat3_DB* sokratDB);
+    //void Slot_ShowDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
 
 signals:
     void Signal_CreateDBFromFiles(const QString& path);
-    void Signal_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
+    //void Signal_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
 
     //void Signal_ShowDB_TreeViewModel(QStandardItemModel* rootModel);
     //void Signal_ShowDB_ModuleTableModel(QStandardItemModel* propertiesModel);
