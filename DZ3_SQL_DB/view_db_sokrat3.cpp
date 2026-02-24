@@ -9,27 +9,26 @@ View_DB_Sokrat3::View_DB_Sokrat3(QWidget *parent) :
     connect(ui->treeView, &QTreeView::clicked, this, &View_DB_Sokrat3::handlerItemClick_TreeView);
 }
 
-void View_DB_Sokrat3::showEvent(QShowEvent *event) {
-    emit Signal_ShowDB_TreeViewModel();
-    QDialog::showEvent(event);
-}
+
 
 View_DB_Sokrat3::~View_DB_Sokrat3()
 {
     delete ui;
 }
 
-void View_DB_Sokrat3::Slot_ShowDB_TreeViewModel(QStandardItemModel* rootModel) {
+void View_DB_Sokrat3::SetDB_TreeViewModel(QStandardItemModel* rootModel) {
     ui->treeView->setModel(rootModel);
 }
 
-void View_DB_Sokrat3::Slot_ShowDB_ModuleTableModel(QStandardItemModel* propertiesModel) {
+void View_DB_Sokrat3::SetDB_ModuleTableModel(QStandardItemModel* propertiesModel){
     ui->tableView->setModel(propertiesModel);
 }
 
 void View_DB_Sokrat3::handlerItemClick_TreeView(const QModelIndex &index) {
 
     if (!index.isValid()) return;
+
+    qDebug() << "Клик на элементе: " << index.row() << " - " << index.column();
 
     //QVariant userData = sokratDB_->GetItemModel_SokratDB().data(index, Qt::UserRole);
 

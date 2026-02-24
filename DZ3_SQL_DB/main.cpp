@@ -15,11 +15,11 @@ int main(int argc, char *argv[])
     //void Signal_GetDB_TreeViewModel(QStandardItem* rootModel);
     //void Signal_GetDB_ModuleTableModel(QStandardItem* propertiesModel);
 
-    QObject::connect(&w, SIGNAL(Signal_CreateDBFromFiles(const QString& path)), &controller_db, SLOT(Slot_CreateDBFromFiles(const QString& path)));
-    QObject::connect(&w, SIGNAL(Signal_GiveDB_TreeViewModel()), &controller_db, SLOT(Slot_GiveDB_TreeViewModel()));
-    QObject::connect(&w, SIGNAL(Signal_GiveDB_TreeViewModel()), &controller_db, SLOT(Slot_GiveDB_TreeViewModel()));
-    QObject::connect(&controller_db, SIGNAL(Signal_GetDB_TreeViewModel(QStandardItemModel*)), &w, SLOT(Slot_GiveDB_TreeViewModel(QStandardItemModel*)));
-    QObject::connect(&controller_db, SIGNAL(Signal_GetDB_ModuleTableModel(QStandardItemModel*)), &w, SLOT(Slot_GiveDB_ModuleTableModel(QStandardItemModel*)));
+    QObject::connect(&w, SIGNAL(Signal_CreateDBFromFiles(const QString&)), &controller_db, SLOT(Slot_CreateDBFromFiles(const QString&)));
+    QObject::connect(&w, SIGNAL(Signal_GiveDB_ModuleTableModel(const QString&, const EModuleFields)), &controller_db, SLOT(Slot_GiveDB_ModuleTableModel(const QString&, const EModuleFields)));
+
+    QObject::connect(&controller_db, SIGNAL(Signal_GetDB_TreeViewModel(QStandardItemModel*)), &w, SLOT(Slot_GetDB_TreeViewModel(QStandardItemModel*)));
+    QObject::connect(&controller_db, SIGNAL(Signal_GetDB_ModuleTableModel(QStandardItemModel*)), &w, SLOT(Slot_GetDB_TreeViewModel(QStandardItemModel*)));
 
 
     return a.exec();
