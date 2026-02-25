@@ -215,6 +215,7 @@ void Sokrat3_DB::CreateDB_ItemTreeView(const SModuleDataBase& db_mdl) {
         if (it_item != db_mdl.hash_modules_params.end()) {
             QStandardItem* paramItem = new QStandardItem(String_Params);
             paramItem->setData(*it, Qt::UserRole);
+            paramItem->setData(ID_Field_Params, Qt::UserRole + 1);
             moduleItem->appendRow(paramItem);
             LoadDB_ModuleItemTableView(*it, EModuleFields::PARAMS, db_mdl.hash_modules_params[*it]);
         }
@@ -223,7 +224,8 @@ void Sokrat3_DB::CreateDB_ItemTreeView(const SModuleDataBase& db_mdl) {
         it_item = db_mdl.hash_modules_commands.find(*it);
         if (it_item != db_mdl.hash_modules_commands.end()) {
             QStandardItem* cmdItem = new QStandardItem(String_Commands);
-            cmdItem->setData(*it,Qt::UserRole);
+            cmdItem->setData(*it, Qt::UserRole);
+            cmdItem->setData(ID_Field_Commands, Qt::UserRole + 1);
             moduleItem->appendRow(cmdItem);
             LoadDB_ModuleItemTableView(*it, EModuleFields::COMMANDS, db_mdl.hash_modules_commands[*it]);
         }
@@ -232,7 +234,8 @@ void Sokrat3_DB::CreateDB_ItemTreeView(const SModuleDataBase& db_mdl) {
         it_item = db_mdl.hash_modules_signals.find(*it);
         if (it_item != db_mdl.hash_modules_signals.end()) {
             QStandardItem* signalItem = new QStandardItem(String_Signals);
-            signalItem->setData(*it,Qt::UserRole);
+            signalItem->setData(*it, Qt::UserRole);
+            signalItem->setData(ID_Field_Signals, Qt::UserRole + 1);
             moduleItem->appendRow(signalItem);
             LoadDB_ModuleItemTableView(*it, EModuleFields::SIGNALS,  db_mdl.hash_modules_signals[*it]);
         }
@@ -328,10 +331,54 @@ QStandardItemModel* Sokrat3_DB::GetItemModel_ModuleProperties(const QString& mdl
 
 void Sokrat3_DB::createSQLite_SokratDB() {
     QSqlDatabase sqlDB = QSqlDatabase::addDatabase("QSQLITE");
-    sqlDB.setDatabaseName(sokrat_name_);
+
+    QDir dir(db_path_);
+
+    if (!dir.exists("SQL")) {
+        if (!dir.mkpath("SQL")) {
+            qDebug() << "Не удалось создать директорию SQL/";
+            return;
+        }
+    }
+
+    QString db_path = db_path_ + "SQL/" + sokrat_name_ + ".db";
+    sqlDB.setDatabaseName(db_path);
 
     if (!sqlDB.open()) {
         qDebug() << "Ошибка открытия БД" << sqlDB.lastError().text() << "\n";
     }
-    qDebug() << "Открытие БД прошло успешно!!!" <<  "\n";
+    qDebug() << "Открытие БД прошло успешно!!!" << db_path << "\n";
+
+    createSqlTables();
+}
+
+bool Sokrat3_DB::createSqlTables() {
+    bool ret = true;
+
+    QSqlQuery query;
+
+    for (auto it = tableItem_modules_params_.begin(); it != tableItem_modules_params_.end(); ++it) {
+        QString db_name = it.key() + "_Params";
+        qDebug() << "Таблица - " << db_name << "\n";
+        QString db_part1 = "CREATE TABLE IF NOT EXISTS ";
+        QString db_part2 = " ("
+                           "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                           "name TEXT NOT NULL, "
+                           "type TEXT NOT NULL, "
+                           "InitValve INTEGER NOT NULL, "
+                           "MinValve INTEGER NOT NULL, "
+                           "MaxValve INTEGER NOT NULL, "
+                           "MBsAddress INTEGER NOT NULL"
+                           ")";
+        QString db_create = db_part1 + db_name + db_part2;
+
+        if (!query.exec(db_create)) {
+            qDebug() << "Ошибка создания таблицы:" << query.lastError().text();
+            return false;
+        }
+        qDebug() << "Таблица - " << db_name << "создана успешно" << "\n";
+    }
+
+
+    return ret;
 }

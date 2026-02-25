@@ -43,6 +43,10 @@ enum class EModuleFields {
     SIGNALS
 };
 
+inline constexpr quint8 ID_Field_Params = 1;
+inline constexpr quint8 ID_Field_Commands = 2;
+inline constexpr quint8 ID_Field_Signals = 3;
+
 struct SModulePropertiesDesc {
     quint8 cProperties;
     QStringList NameProperties;

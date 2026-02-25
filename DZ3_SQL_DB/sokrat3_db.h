@@ -46,6 +46,8 @@ private:
     void LoadDB_ModuleItemTableView(const QString& mdl, EModuleFields field, const QVector<SPropertyDesc>& mdl_prop);
     QList<QStandardItem*> LoadDB_RowProperties(const SPropertyDesc& property);
 
+    bool createSqlTables();
+
 
 private:
 
@@ -62,6 +64,7 @@ private:
     QHash<QString,QStandardItemModel*> tableItem_modules_signals_;
 
     bool dbIsOk_ = false;
+
 };
 
 #endif // SOKRAT3_DB_H
