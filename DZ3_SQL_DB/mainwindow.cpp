@@ -29,23 +29,20 @@ void MainWindow::on_action_ESC_Config_triggered()
     }
 }
 
-//void MainWindow::Slot_ShowDB_ModuleTableModel(const QString& moduleName, const EModuleFields field){
-//    Signal_GiveDB_ModuleTableModel(moduleName, field);
-//}
-
-//void MainWindow::Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel) {
-//    Form_DB_Sokrat3_ = new View_DB_Sokrat3(this);
-//    connect(Form_DB_Sokrat3_,SIGNAL(Signal_ShowDB_ModuleTableModel(const QString&, const EModuleFields)), this,SLOT(Slot_ShowDB_ModuleTableModel(const QString&, const EModuleFields)));
-//    Form_DB_Sokrat3_->SetDB_TreeViewModel(rootModel);
-//    Form_DB_Sokrat3_->exec();
-//}
-
 void MainWindow::Slot_GetDB_SokratDBModel(Sokrat3_DB* sokratDB){
     Form_DB_Sokrat3_ = new View_DB_Sokrat3(this);
     Form_DB_Sokrat3_->SetDB_SokratDB(sokratDB);
     Form_DB_Sokrat3_->exec();
+
+    if (Form_DB_Sokrat3_->Get_SaveSokratDB()) {
+        qDebug() << " Generate Sokrat Sql DataBase " << "\n";
+        emit Signal_GiveDB_TreeViewModel();
+    }
 }
 
-//void MainWindow::Slot_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel) {
-//    Form_DB_Sokrat3_->SetDB_ModuleTableModel(propertiesModel);
-//}
+void MainWindow::Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel) {
+    qDebug() << " Generate TreeView in Main " << "\n";
+    treeViewModel_ = rootModel;
+    ui->treeView->setModel(treeViewModel_);
+}
+

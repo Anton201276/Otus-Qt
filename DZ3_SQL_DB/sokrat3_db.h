@@ -7,6 +7,8 @@
 #include <QHash>
 #include <QVector>
 #include <QStandardItemModel>
+#include <QtSql>
+#include <QSqlDatabase>
 
 #include "CommonDefineType.h"
 
@@ -23,7 +25,11 @@ public:
     QStandardItemModel* GetItemModel_SokratDB() ;
     QStandardItemModel* GetItemModel_ModuleProperties(const QString& mdl, EModuleFields prop);
 
-    bool Get_DbIsOk() const;
+    bool Get_DbIsOk() const {
+        return dbIsOk_;
+    }
+
+    void createSQLite_SokratDB();
 
 private:
     bool CreateDB_FromFiles();

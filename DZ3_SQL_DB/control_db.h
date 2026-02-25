@@ -16,6 +16,7 @@ public:
 public slots:
     void Slot_CreateDBFromFiles(const QString& path);
     //void Slot_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
+    void Slot_GiveDB_TreeViewModel();
 
 signals:
     void Signal_GetDB_TreeViewModel(QStandardItemModel* rootModel);

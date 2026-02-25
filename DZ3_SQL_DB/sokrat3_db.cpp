@@ -67,11 +67,8 @@ bool Sokrat3_DB::CreateItemModelDB_FromFiles(SModuleDataBase& db_mdl){
         system_file.close();
     }
     else {
-        //qDebug() << "Ошибка открытия файла:" << system_file.errorString();
         ret = false;
     }
-
-    //Создаем ItemData для Представлений
     CreateDB_ItemModels(db_mdl);
 
     return ret;
@@ -87,10 +84,6 @@ void Sokrat3_DB::GetListModulesDesc(QStringList& list) const {
     for (auto it = modules_names_.begin(); it != modules_names_.end(); ++it) {
         list << list_modules_desc_[*it];
     }
-}
-
-bool Sokrat3_DB::Get_DbIsOk() const {
-    return dbIsOk_;
 }
 
 bool Sokrat3_DB::ParseModuleDescFile(const QString& name_module, SModuleDataBase& db_mdl) {
@@ -331,4 +324,14 @@ QStandardItemModel* Sokrat3_DB::GetItemModel_ModuleProperties(const QString& mdl
     }
 
     return ret;
+}
+
+void Sokrat3_DB::createSQLite_SokratDB() {
+    QSqlDatabase sqlDB = QSqlDatabase::addDatabase("QSQLITE");
+    sqlDB.setDatabaseName(sokrat_name_);
+
+    if (!sqlDB.open()) {
+        qDebug() << "Ошибка открытия БД" << sqlDB.lastError().text() << "\n";
+    }
+    qDebug() << "Открытие БД прошло успешно!!!" <<  "\n";
 }
