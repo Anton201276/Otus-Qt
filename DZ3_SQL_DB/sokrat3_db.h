@@ -46,7 +46,7 @@ private:
     void LoadDB_ModuleItemTableView(const QString& mdl, EModuleFields field, const QVector<SPropertyDesc>& mdl_prop);
     QList<QStandardItem*> LoadDB_RowProperties(const SPropertyDesc& property);
 
-    bool createSqlTables();
+    bool loadDataSqlTables(const QSqlDatabase& dbc);
 
 
 private:

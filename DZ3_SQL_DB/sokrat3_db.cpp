@@ -333,15 +333,23 @@ void Sokrat3_DB::createSQLite_SokratDB() {
     QSqlDatabase sqlDB = QSqlDatabase::addDatabase("QSQLITE");
 
     QDir dir(db_path_);
+    QString db_path;
 
     if (!dir.exists("SQL")) {
         if (!dir.mkpath("SQL")) {
             qDebug() << "Не удалось создать директорию SQL/";
             return;
         }
+        else {
+            db_path = db_path_ + "SQL/" + sokrat_name_ + ".db";
+        }
+    }
+    else {
+        db_path = db_path_ + "SQL/" + sokrat_name_ + ".db";
+        qDebug() << "путь 1 к БД" << db_path << "\n";
     }
 
-    QString db_path = db_path_ + "SQL/" + sokrat_name_ + ".db";
+    qDebug() << "путь 2 к БД" << db_path << "\n";
     sqlDB.setDatabaseName(db_path);
 
     if (!sqlDB.open()) {
@@ -349,10 +357,10 @@ void Sokrat3_DB::createSQLite_SokratDB() {
     }
     qDebug() << "Открытие БД прошло успешно!!!" << db_path << "\n";
 
-    createSqlTables();
+    loadDataSqlTables(sqlDB);
 }
 
-bool Sokrat3_DB::createSqlTables() {
+bool Sokrat3_DB::loadDataSqlTables(const QSqlDatabase& dbc) {
     bool ret = true;
 
     QSqlQuery query;
@@ -377,6 +385,24 @@ bool Sokrat3_DB::createSqlTables() {
             return false;
         }
         qDebug() << "Таблица - " << db_name << "создана успешно" << "\n";
+
+        QSqlTableModel sqlModel(nullptr, dbc);
+        sqlModel.setTable(db_name);
+        sqlModel.setEditStrategy(QSqlTableModel::OnRowChange);
+
+        for (int row = 0; row < it.value()->rowCount(); ++row) {
+                sqlModel.insertRow(row);
+                for (int col = 0; col < it.value()->columnCount(); ++col) {
+                    QModelIndex modelIndex = it.value()->index(row, col);
+                    QModelIndex sqlIndex = sqlModel.index(row, col);
+                    sqlModel.setData(sqlIndex, it.value()->data(modelIndex));
+                }
+            }
+
+            if (!sqlModel.submitAll()) {
+                qDebug() << "Ошибка сохранения в БД:" << sqlModel.lastError().text();
+                return false;
+            }
     }
 
 
