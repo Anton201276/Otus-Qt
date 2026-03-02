@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->treeView, &QTreeView::clicked, this, &MainWindow::handlerItemClick_TreeView);
 }
 
 MainWindow::~MainWindow()
@@ -35,14 +36,16 @@ void MainWindow::Slot_GetDB_SokratDBModel(Sokrat3_DB* sokratDB){
     Form_DB_Sokrat3_->exec();
 
     if (Form_DB_Sokrat3_->Get_SaveSokratDB()) {
-        qDebug() << " Generate Sokrat Sql DataBase " << "\n";
         emit Signal_GiveDB_TreeViewModel();
     }
 }
 
 void MainWindow::Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel) {
-    qDebug() << " Generate TreeView in Main " << "\n";
     treeViewModel_ = rootModel;
     ui->treeView->setModel(treeViewModel_);
+}
+
+void MainWindow::handlerItemClick_TreeView(const QModelIndex &index) {
+    qDebug() << "Клик мыши на элементе row = " << index.row() << ", column = " << index.column() << "\n";
 }
 

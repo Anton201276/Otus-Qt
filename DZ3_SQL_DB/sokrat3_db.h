@@ -24,6 +24,7 @@ public:
 
     QStandardItemModel* GetItemModel_SokratDB() ;
     QStandardItemModel* GetItemModel_ModuleProperties(const QString& mdl, EModuleFields prop);
+    QSqlTableModel* GetItemModel_FromSqlDataBase(const QModelIndex& index);
 
     bool Get_DbIsOk() const {
         return dbIsOk_;
@@ -46,7 +47,12 @@ private:
     void LoadDB_ModuleItemTableView(const QString& mdl, EModuleFields field, const QVector<SPropertyDesc>& mdl_prop);
     QList<QStandardItem*> LoadDB_RowProperties(const SPropertyDesc& property);
 
-    bool loadDataSqlTables(const QSqlDatabase& dbc);
+    bool copyModelToSqlTable(const QSqlDatabase& db, const QString& tableName);
+    bool createMainSqlTable(const QSqlDatabase& dbc);
+    bool createPlantUserSqlTable(const QSqlDatabase& dbc, const QString field);
+    bool createDescSqlTable(const QSqlDatabase& dbc);
+    bool createSqlTreeModel(const QSqlDatabase& dbc);
+    bool addItemSqlTreeModel(const QSqlDatabase& dbc, QStandardItem* rootItem,  QString type);
 
 
 private:
@@ -63,7 +69,13 @@ private:
     QHash<QString,QStandardItemModel*> tableItem_modules_commands_;
     QHash<QString,QStandardItemModel*> tableItem_modules_signals_;
 
+    QStandardItemModel SqlDB_TreeItemModel_;
+    QStandardItem SqlDB_TreeRootItem_;
+    QSqlDatabase sqlDB_;
+    QSqlTableModel* sqlDB_TableModel_;
+
     bool dbIsOk_ = false;
+    bool dbSqlIsOk_ = false;
 
 };
 

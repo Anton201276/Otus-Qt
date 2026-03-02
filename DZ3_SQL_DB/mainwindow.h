@@ -38,6 +38,9 @@ private slots:
     void on_action_ESC_Config_triggered();
 
 private:
+    void handlerItemClick_TreeView(const QModelIndex &index);
+
+private:
     Ui::MainWindow *ui;
     View_DB_Sokrat3* Form_DB_Sokrat3_;
     QStandardItemModel* treeViewModel_;

@@ -94,6 +94,14 @@ inline const QString String_Params = "Параметры";
 inline const QString String_Commands = "Команды";
 inline const QString String_Signals = "Сигналы";
 
+inline const QString Sql_Params = "_Params";
+inline const QString Sql_Commands = "_Commands";
+inline const QString Sql_Signals = "_Signals";
+
+inline const QString sqlist_plant = "SQListPlantModules";
+inline const QString sqlist_user = "SQListUserModules";
+inline const QString sqlDB_MainDesc = "MainDescription";
+
 //struct SModuleRowPropertiesDesc {
 //    QString NameProperties;
 //    EDescDataType enDBTypes;
