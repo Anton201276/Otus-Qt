@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QString>
 #include <QFile>
+#include <QFileInfo>
 #include <QHash>
 #include <QVector>
 #include <QStandardItemModel>
@@ -16,7 +17,7 @@
 class Sokrat3_DB
 {
 public:
-    Sokrat3_DB(const QString db_path);
+    Sokrat3_DB(const QString& db_path);
     ~Sokrat3_DB();
 
     void GetListModulesName(QStringList& list) const;
@@ -31,6 +32,7 @@ public:
     }
 
     void createSQLite_SokratDB();
+    bool OpenSqliteDB(const QString& db_path);
 
 private:
     bool CreateDB_FromFiles();
@@ -46,6 +48,7 @@ private:
     //void CreateDB_ModuleItemTableView(const SModuleDataBase& db_mdl);
     void LoadDB_ModuleItemTableView(const QString& mdl, EModuleFields field, const QVector<SPropertyDesc>& mdl_prop);
     QList<QStandardItem*> LoadDB_RowProperties(const SPropertyDesc& property);
+
 
     bool copyModelToSqlTable(const QSqlDatabase& db, const QString& tableName);
     bool createMainSqlTable(const QSqlDatabase& dbc);

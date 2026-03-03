@@ -18,11 +18,10 @@ void Control_DB::Slot_GiveDB_TreeViewModel() {
 }
 
 void Control_DB::Slot_GiveDB_TableSqlModel(const QModelIndex& index) {
-     //mySokratDB_->GetItemModel_FromSqlDataBase(index);
-     //QSqlTableModel* ;
      emit Signal_GetDB_SqlDBModel(mySokratDB_->GetItemModel_FromSqlDataBase(index));
 }
 
-//void Control_DB::Slot_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field) {
-//    emit Signal_GetDB_ModuleTableModel(mySokratDB_->GetItemModel_ModuleProperties(moduleName, field));
-//}
+void Control_DB::Slot_OpenSQLiteDBFromFile(const QString& dp_file) {
+    mySokratDB_->OpenSqliteDB(dp_file);
+    emit Signal_GetDB_TreeViewModel(mySokratDB_->GetItemModel_SokratDB());
+}

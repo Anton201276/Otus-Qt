@@ -29,6 +29,7 @@ public slots:
 
 signals:
     void Signal_CreateDBFromFiles(const QString& path);
+    void Signal_OpenSQLiteDBFromFile(const QString& path);
     void Signal_GiveDB_TreeViewModel();
     void Signal_GiveDB_TableSqlModel(const QModelIndex& index);
 
@@ -38,6 +39,8 @@ signals:
 private slots:
     void on_action_exit_app_triggered();
     void on_action_ESC_Config_triggered();
+
+    void on_action_open_DB_SQL_triggered();
 
 private:
     void handlerItemClick_TreeView(const QModelIndex &index);

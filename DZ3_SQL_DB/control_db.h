@@ -15,9 +15,9 @@ public:
 
 public slots:
     void Slot_CreateDBFromFiles(const QString& path);
-    //void Slot_GiveDB_ModuleTableModel(const QString& moduleName, const EModuleFields field);
     void Slot_GiveDB_TreeViewModel();
     void Slot_GiveDB_TableSqlModel(const QModelIndex& index);
+    void Slot_OpenSQLiteDBFromFile(const QString& dp_file);
 
 signals:
     void Signal_GetDB_TreeViewModel(QStandardItemModel* rootModel);
@@ -28,8 +28,6 @@ signals:
 
 private:
     Sokrat3_DB* mySokratDB_;
-    //QStandardItem* rootModel_;
-    //QStandardItem* modulePropertiesModel_;
 };
 
 #endif // CONTROL_DB_H

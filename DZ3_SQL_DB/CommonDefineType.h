@@ -103,14 +103,4 @@ inline const QString sqlist_user = "SQListUserModules";
 inline const QString sqlDB_MainDesc = "MainDescription";
 inline const QString sqlDB_ModuleFieldDesc = "ModuleFieldDescription";
 
-//struct SModuleRowPropertiesDesc {
-//    QString NameProperties;
-//    EDescDataType enDBTypes;
-//    qint32 InitValue;
-//    qint32 MinValue;
-//    qint32 MaxValue;
-//    quint32 Address;
-//};
-
-
 #endif // COMMONDEFINETYPE_H

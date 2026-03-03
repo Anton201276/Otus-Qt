@@ -12,16 +12,13 @@ int main(int argc, char *argv[])
 
     Control_DB controller_db;
 
-    //void Signal_GetDB_TreeViewModel(QStandardItem* rootModel);
-    //void Signal_GetDB_ModuleTableModel(QStandardItem* propertiesModel);
-
     QObject::connect(&w, SIGNAL(Signal_CreateDBFromFiles(const QString&)), &controller_db, SLOT(Slot_CreateDBFromFiles(const QString&)));
     QObject::connect(&w, SIGNAL(Signal_GiveDB_TreeViewModel()), &controller_db, SLOT(Slot_GiveDB_TreeViewModel()));
     QObject::connect(&w, SIGNAL(Signal_GiveDB_TableSqlModel(const QModelIndex&)), &controller_db, SLOT(Slot_GiveDB_TableSqlModel(const QModelIndex&)));
+    QObject::connect(&w, SIGNAL(Signal_OpenSQLiteDBFromFile(const QString&)), &controller_db, SLOT(Slot_OpenSQLiteDBFromFile(const QString&)));
 
-    //QObject::connect(&controller_db, SIGNAL(Signal_GetDB_TreeViewModel(QStandardItemModel*)), &w, SLOT(Slot_GetDB_TreeViewModel(QStandardItemModel*)));
+
     QObject::connect(&controller_db, SIGNAL(Signal_GetDB_TreeViewModel(QStandardItemModel*)), &w, SLOT(Slot_GetDB_TreeViewModel(QStandardItemModel*)));
-
     QObject::connect(&controller_db, SIGNAL(Signal_GetDB_SokratDBModel(Sokrat3_DB*)), &w, SLOT(Slot_GetDB_SokratDBModel(Sokrat3_DB*)));
     QObject::connect(&controller_db, SIGNAL(Signal_GetDB_SqlDBModel(QSqlTableModel*)), &w, SLOT(Slot_GetDB_SqlDBModel(QSqlTableModel*)));
 

@@ -37,7 +37,6 @@
      <string>Файл</string>
     </property>
     <addaction name="action_ESC_Config"/>
-    <addaction name="action_create_new"/>
     <addaction name="action_open_DB_SQL"/>
     <addaction name="action_save_db_sql"/>
     <addaction name="action_save_as_db_sql"/>
@@ -50,11 +49,6 @@
   <action name="action_ESC_Config">
    <property name="text">
     <string>Создать DB из ESC Config</string>
-   </property>
-  </action>
-  <action name="action_create_new">
-   <property name="text">
-    <string>Создать DB SQL</string>
    </property>
   </action>
   <action name="action_open_DB_SQL">

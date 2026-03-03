@@ -1,8 +1,17 @@
 #include "sokrat3_db.h"
 
-Sokrat3_DB::Sokrat3_DB(const QString db_path): db_path_(db_path){
-    SModuleDataBase SDataBase;
-    dbIsOk_ = CreateItemModelDB_FromFiles(SDataBase);
+Sokrat3_DB::Sokrat3_DB(const QString& db_path): db_path_(db_path){
+
+    QFileInfo fileInfo(db_path);
+    QString ext = fileInfo.suffix();
+
+    if (ext == "stm") {
+        SModuleDataBase SDataBase;
+        dbIsOk_ = CreateItemModelDB_FromFiles(SDataBase);
+    }
+    else if (ext == "db") {
+        dbSqlIsOk_ = OpenSqliteDB(db_path);
+    }
 }
 
 Sokrat3_DB::~Sokrat3_DB() {
@@ -15,7 +24,6 @@ Sokrat3_DB::~Sokrat3_DB() {
     qDeleteAll(tableItem_modules_signals_);  // Удаляет все QStandardItemModel* в хэше
     tableItem_modules_signals_.clear();
 }
-
 
 bool Sokrat3_DB::CreateItemModelDB_FromFiles(SModuleDataBase& db_mdl){
 
@@ -355,6 +363,11 @@ void Sokrat3_DB::createSQLite_SokratDB() {
     }
     else {
         db_path = db_path_ + "SQL/" + sokrat_name_ + ".db";
+        QFile db_file(db_path);
+        QFileInfo fileInfo(db_path);
+        if (db_file.exists()) {
+            db_file.remove();
+        }
     }
     sqlDB.setDatabaseName(db_path);
 
@@ -376,6 +389,30 @@ void Sokrat3_DB::createSQLite_SokratDB() {
     dbSqlIsOk_ = isOk;
     sqlDB_ = sqlDB;
     sqlDB_TableModel_ = new QSqlTableModel(nullptr, sqlDB_);
+}
+
+bool Sokrat3_DB::OpenSqliteDB(const QString& db_path){
+
+    QSqlDatabase sqlDB = QSqlDatabase::addDatabase("QSQLITE");
+    sqlDB.setDatabaseName(db_path);
+
+    if (!sqlDB.open()) {
+        qDebug() << "Ошибка открытия БД" << sqlDB.lastError().text() << "\n";
+        return false;
+    }
+
+    qDebug() << "Try open Sql DB - " << db_path << "\n";
+    bool isOk = createSqlTreeModel(sqlDB);
+
+    if (!isOk) {
+        return false;
+    }
+
+    dbSqlIsOk_ = isOk;
+    sqlDB_ = sqlDB;
+    sqlDB_TableModel_ = new QSqlTableModel(nullptr, sqlDB_);
+
+    return true;
 }
 
 bool Sokrat3_DB::copyModelToSqlTable(const QSqlDatabase& dbc, const QString& tableName) {
@@ -670,6 +707,8 @@ bool Sokrat3_DB::createPlantUserSqlTable(const QSqlDatabase& dbc, const QString 
 
 bool Sokrat3_DB::createSqlTreeModel(const QSqlDatabase& dbc){
 
+    qDebug() << "Come in to Create TreeModel \n";
+
     QSqlQuery query(dbc);
     QString query_tab = "SELECT * FROM MainDescription";
 
@@ -678,12 +717,21 @@ bool Sokrat3_DB::createSqlTreeModel(const QSqlDatabase& dbc){
         return false;
     }
 
+    qDebug() << "Done query to MainDescription \n";
+
     query.first();
     QSqlRecord rec = query.record();
     QString sokrat_name = query.value(rec.indexOf("Имя")).toString();
 
+    qDebug() << "Quered sokrat_name" << sokrat_name << "\n";
+
     SqlDB_TreeRootItem_.setText(sokrat_name);
+
+    qDebug() << "setText " << sokrat_name << "\n";
+
     SqlDB_TreeRootItem_.setRowCount(2);
+
+    qDebug() << "Set sokrat_name \n";
 
     QStandardItem* plantItem = new QStandardItem("Настройки изготовителя");
     QStandardItem* userItem = new QStandardItem("Настройки пользователя");
@@ -691,6 +739,8 @@ bool Sokrat3_DB::createSqlTreeModel(const QSqlDatabase& dbc){
     SqlDB_TreeRootItem_.setChild(1,0,userItem);
     SqlDB_TreeItemModel_.appendRow(&SqlDB_TreeRootItem_);
     SqlDB_TreeItemModel_.setHorizontalHeaderLabels({"База данных контроллера Сократ-3"});
+
+    qDebug() << "Created RootItem \n";
 
     addItemSqlTreeModel(dbc, plantItem, sqlist_plant);
     addItemSqlTreeModel(dbc, userItem, sqlist_user);
@@ -728,21 +778,21 @@ bool Sokrat3_DB::addItemSqlTreeModel(const QSqlDatabase& dbc, QStandardItem* roo
         if (cParams > 0) {
             QStandardItem* propItem = new QStandardItem(String_Params);
             //propItem->setData(name, Qt::UserRole);
-            propItem->setData(ID_Field_Params, Qt::UserRole);
+            propItem->setData(Sql_Params, Qt::UserRole);
             moduleItem->appendRow(propItem);
         }
 
         if (cCommands > 0) {
             QStandardItem* propItem = new QStandardItem(String_Commands);
             //propItem->setData(name, Qt::UserRole);
-            propItem->setData(ID_Field_Commands, Qt::UserRole);
+            propItem->setData(Sql_Commands, Qt::UserRole);
             moduleItem->appendRow(propItem);
         }
 
         if (cSignals > 0) {
             QStandardItem* propItem = new QStandardItem(String_Signals);
             //propItem->setData(name, Qt::UserRole);
-            propItem->setData(ID_Field_Signals, Qt::UserRole);
+            propItem->setData(Sql_Signals, Qt::UserRole);
             moduleItem->appendRow(propItem);
         }
 
@@ -849,6 +899,14 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
         sqlDB_TableModel_->setTable(sqlDB_ModuleFieldDesc);
         sqlDB_TableModel_->select();
 
+    }
+    else if (depth == 3) {
+        //Qt::UserRole
+        QString fieldTable = index.data(Qt::UserRole).toString();
+        QModelIndex parent_id = index.parent();
+        fieldTable = parent_id.data(Qt::UserRole).toString() + fieldTable;
+        sqlDB_TableModel_->setTable(fieldTable);
+        sqlDB_TableModel_->select();
     }
     return sqlDB_TableModel_;
 }

@@ -63,3 +63,11 @@ void MainWindow::Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable) {
 
 }
 
+
+void MainWindow::on_action_open_DB_SQL_triggered()
+{
+    QString db_sql_path_file = QFileDialog::getOpenFileName(this, "Найти SQL.db","", "*.db");
+    if (!db_sql_path_file.isEmpty()) {
+        emit Signal_OpenSQLiteDBFromFile(db_sql_path_file);
+    }
+}
