@@ -725,6 +725,8 @@ bool Sokrat3_DB::createSqlTreeModel(const QSqlDatabase& dbc){
 
     qDebug() << "Quered sokrat_name" << sokrat_name << "\n";
 
+    SokratTree_ItemModel_
+
     SqlDB_TreeRootItem_.setText(sokrat_name);
 
     qDebug() << "setText " << sokrat_name << "\n";
