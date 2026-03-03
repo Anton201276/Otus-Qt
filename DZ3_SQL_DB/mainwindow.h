@@ -25,10 +25,12 @@ public slots:
     void Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel);
     //void Slot_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
     void Slot_GetDB_SokratDBModel(Sokrat3_DB* sokratDB);
+    void Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable);
 
 signals:
     void Signal_CreateDBFromFiles(const QString& path);
     void Signal_GiveDB_TreeViewModel();
+    void Signal_GiveDB_TableSqlModel(const QModelIndex& index);
 
     //void Signal_ShowDB_TreeViewModel(QStandardItemModel* rootModel);
     //void Signal_ShowDB_ModuleTableModel(QStandardItemModel* propertiesModel);

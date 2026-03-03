@@ -101,6 +101,7 @@ inline const QString Sql_Signals = "_Signals";
 inline const QString sqlist_plant = "SQListPlantModules";
 inline const QString sqlist_user = "SQListUserModules";
 inline const QString sqlDB_MainDesc = "MainDescription";
+inline const QString sqlDB_ModuleFieldDesc = "ModuleFieldDescription";
 
 //struct SModuleRowPropertiesDesc {
 //    QString NameProperties;

@@ -425,6 +425,11 @@ bool Sokrat3_DB::copyModelToSqlTable(const QSqlDatabase& dbc, const QString& tab
         sqlModel.setTable(db_name);
         sqlModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
 
+        if (!sqlModel.select()) {
+            qDebug() << "Ошибка загрузки данных:" << sqlModel.lastError().text();
+            return false;
+        }
+
         for (int row = 0; row < it.value()->rowCount(); ++row) {
             if (!sqlModel.insertRow(sqlModel.rowCount())) {
                     qDebug() << "Ошибка вставки строки" << sqlModel.rowCount();
@@ -500,6 +505,11 @@ bool Sokrat3_DB::createDescSqlTable(const QSqlDatabase& dbc) {
     sqlModel.setTable(db_part2);
     sqlModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
 
+    if (!sqlModel.select()) {
+        qDebug() << "Ошибка загрузки данных:" << sqlModel.lastError().text();
+        return false;
+    }
+
     if (!sqlModel.insertRow(sqlModel.rowCount())) {
             qDebug() << "Ошибка вставки строки" << sqlModel.rowCount();
             qDebug() << "Последняя ошибка модели:" << sqlModel.lastError().text();
@@ -560,15 +570,33 @@ bool Sokrat3_DB::createPlantUserSqlTable(const QSqlDatabase& dbc, const QString 
                        "Сигналы INTEGER NOT NULL"
                        ")";
 
+    QString db_part4 = " ("
+                       "№ INTEGER PRIMARY KEY AUTOINCREMENT, "
+                       "Параметры INTEGER NOT NULL, "
+                       "Команды INTEGER NOT NULL, "
+                       "Сигналы INTEGER NOT NULL"
+                       ")";
+
     QString db_create= db_part1 + field + db_part3;
     if (!query.exec(db_create)) {
         qDebug() << "Ошибка создания таблицы:" << query.lastError().text();
         return false;
     }
 
+    db_create= db_part1 + sqlDB_ModuleFieldDesc + db_part4;
+    if (!query.exec(db_create)) {
+        qDebug() << "Ошибка создания таблицы с полями модулей:" << query.lastError().text();
+        return false;
+    }
+
     QSqlTableModel sqlModel(nullptr, dbc);
     sqlModel.setTable(field);
     sqlModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+    if (!sqlModel.select()) {
+        qDebug() << "Ошибка загрузки данных:" << sqlModel.lastError().text();
+        return false;
+    }
 
     int id_start = 0;
     int id_end = 0;
@@ -728,6 +756,7 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
 
     int depth = 0;
     QModelIndex current = index;
+
     while (current.parent().isValid()) {
         depth++;
         current = current.parent();
@@ -736,25 +765,90 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
     if (depth == 0) {
         sqlDB_TableModel_->setTable(sqlDB_MainDesc);
         sqlDB_TableModel_->select();
+        qDebug() << "Запрос к контроллеру" << "\n";
     }
     else if (depth == 1) {
         QString table;
         if (index.row() == 0) {
             table = sqlist_plant;
+            qDebug() << "Запрос к таблице завода" << "\n";
         }
         else {
             table = sqlist_user;
+            qDebug() << "Запрос к таблице пользователя" << "\n";
         }
         sqlDB_TableModel_->setTable(table);
         sqlDB_TableModel_->select();
+
     }
     else if (depth == 2) {
-        if (index.parent().row() == 0) {
 
+        QSqlQuery query(sqlDB_);
+        QString query_pat1 = "SELECT * FROM ";
+        QString query_pat2;
+        QString query_pat3 = " WHERE Имя = :name";
+        QString query_pat4;
+
+        if (index.parent().row() == 0) {
+            query_pat2 = sqlist_plant;
+            qDebug() << "Запрос к таблице модуля завода - " << query_pat2 << "\n";
         }
         else {
-
+            query_pat2 = sqlist_user;
+            qDebug() << "Запрос к таблице модуля пользователя - " << query_pat2 << "\n";
         }
-    }
 
+        query_pat4 = index.data(Qt::UserRole).toString();
+        query_pat1 = query_pat1 + query_pat2 + query_pat3;
+
+        query.prepare(query_pat1);
+        query.bindValue(":name", query_pat4);
+
+        if (!query.exec()) {
+            qDebug() << "Запрос к таблице заводских/пользовательских параметров не выполнен:" << query.lastError().text() << "\n";
+            qDebug() << "query_pat1: " << query_pat1 << query.lastError().text() << "\n";
+            return nullptr;
+        }
+
+        QSqlRecord rec = query.record();
+        query.first();
+        int cParams = query.value(rec.indexOf(String_Params)).toInt();
+        int cCommands = query.value(rec.indexOf(String_Commands)).toInt();
+        int cSignals = query.value(rec.indexOf(String_Signals)).toInt();
+
+
+        QSqlTableModel sqlModel(nullptr, sqlDB_);
+        sqlModel.setTable(sqlDB_ModuleFieldDesc);
+        sqlModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+        if (!sqlModel.select()) {
+            qDebug() << "Ошибка загрузки данных:" << sqlModel.lastError().text();
+            return nullptr;
+        }
+
+        if (!sqlModel.rowCount()) {
+            sqlModel.insertRow(sqlModel.rowCount());
+        }
+
+        int colm = 1;
+        int row = 0;
+        QModelIndex sqlIndex = sqlModel.index(row, colm++);
+        sqlModel.setData(sqlIndex, cParams);
+
+        sqlIndex = sqlModel.index(row, colm++);
+        sqlModel.setData(sqlIndex, cCommands);
+
+        sqlIndex = sqlModel.index(row, colm++);
+        sqlModel.setData(sqlIndex, cSignals);
+
+        if (!sqlModel.submitAll()) {
+            qDebug() << "Ошибка сохранения в  заводские/пользовательские таблицы БД:" << sqlModel.lastError().text();
+            return nullptr;
+        }
+
+        sqlDB_TableModel_->setTable(sqlDB_ModuleFieldDesc);
+        sqlDB_TableModel_->select();
+
+    }
+    return sqlDB_TableModel_;
 }

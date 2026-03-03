@@ -17,11 +17,13 @@ int main(int argc, char *argv[])
 
     QObject::connect(&w, SIGNAL(Signal_CreateDBFromFiles(const QString&)), &controller_db, SLOT(Slot_CreateDBFromFiles(const QString&)));
     QObject::connect(&w, SIGNAL(Signal_GiveDB_TreeViewModel()), &controller_db, SLOT(Slot_GiveDB_TreeViewModel()));
+    QObject::connect(&w, SIGNAL(Signal_GiveDB_TableSqlModel(const QModelIndex&)), &controller_db, SLOT(Slot_GiveDB_TableSqlModel(const QModelIndex&)));
 
     //QObject::connect(&controller_db, SIGNAL(Signal_GetDB_TreeViewModel(QStandardItemModel*)), &w, SLOT(Slot_GetDB_TreeViewModel(QStandardItemModel*)));
     QObject::connect(&controller_db, SIGNAL(Signal_GetDB_TreeViewModel(QStandardItemModel*)), &w, SLOT(Slot_GetDB_TreeViewModel(QStandardItemModel*)));
 
     QObject::connect(&controller_db, SIGNAL(Signal_GetDB_SokratDBModel(Sokrat3_DB*)), &w, SLOT(Slot_GetDB_SokratDBModel(Sokrat3_DB*)));
+    QObject::connect(&controller_db, SIGNAL(Signal_GetDB_SqlDBModel(QSqlTableModel*)), &w, SLOT(Slot_GetDB_SqlDBModel(QSqlTableModel*)));
 
 
     return a.exec();

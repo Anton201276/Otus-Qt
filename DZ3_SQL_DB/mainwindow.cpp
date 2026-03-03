@@ -47,5 +47,19 @@ void MainWindow::Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel) {
 
 void MainWindow::handlerItemClick_TreeView(const QModelIndex &index) {
     qDebug() << "Клик мыши на элементе row = " << index.row() << ", column = " << index.column() << "\n";
+    emit Signal_GiveDB_TableSqlModel(index);
+}
+
+void MainWindow::Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable) {
+
+    qDebug() << "Load QTableView on Mainwindow" << "\n";
+    if (sqlDBTable != nullptr) {
+        qDebug() << "Load QTableView on Mainwindow - Good" << "\n";
+        ui->tableView->setModel(sqlDBTable);
+    }
+    else {
+        qDebug() << "Load QTableView on Mainwindow - Bad" << "\n";
+    }
+
 }
 
