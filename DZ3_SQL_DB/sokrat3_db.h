@@ -13,7 +13,7 @@
 #include <QScopedPointer>
 
 #include "CommonDefineType.h"
-#include "sokratdbdelegate.h"
+
 
 
 class Sokrat3_DB
@@ -34,7 +34,7 @@ public:
     }
 
     void createSQLite_SokratDB();
-    QAbstractItemDelegate* getDelegateTable() const;
+    DelegateMode getModeDelegateTable() const;
 
 
 private:
@@ -80,7 +80,7 @@ private:
     QSqlDatabase sqlDB_;
     QSqlTableModel* sqlDB_TableModel_;
     //QScopedPointer<QAbstractItemDelegate> delegateTable_;
-    QAbstractItemDelegate* delegateTable_;
+    DelegateMode mode = DelegateMode::ReadOnlyAll;
 
     bool dbIsOk_ = false;
     bool dbSqlIsOk_ = false;

@@ -7,7 +7,6 @@ View_DB_Sokrat3::View_DB_Sokrat3(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->treeView, &QTreeView::clicked, this, &View_DB_Sokrat3::handlerItemClick_TreeView);
-    //connect(ui->buttonBox, &QDialog::accept, this, &View_DB_Sokrat3::on_buttonBox_accepted);
 }
 
 View_DB_Sokrat3::~View_DB_Sokrat3()
@@ -27,32 +26,12 @@ void View_DB_Sokrat3::handlerItemClick_TreeView(const QModelIndex &index) {
         return;
     }
 
-    qDebug() << " ***** начало нового запроса ****** " << "\n";
-
-    qDebug() << "Клик мыши на любом элементе row = " << index.row() << ", column = " << index.column() << "\n";
-
-    QModelIndex parentIndex = index.parent();
-
-    if (parentIndex.isValid()) {
-        qDebug() << "Есть родительский элемент row = " << parentIndex.row() << ", column = " << parentIndex.column() << "\n";
-        QModelIndex index_par = parentIndex.parent();
-        if (index_par.isValid()) {
-             qDebug() << "Есть  еще сверху родительский элемент row = " << index_par.row() << ", column = " << index_par.column() << "\n";
-        }
-    }
-    else {
-        qDebug() << "Верх сразу" << "\n";
-    }
-
     QVariant userData = treeDBModel_->data(index, Qt::UserRole);
 
         if (userData.isValid()) {
             QStandardItemModel* tableDBModel;
             QString text_mdl = treeDBModel_->data(index, Qt::UserRole).toString();
             QString text_prop = treeDBModel_->data(index, Qt::DisplayRole).toString();
-
-            qDebug() << "Клик мыши на поле элементе row = " << index.row() << ", column = " << index.column();
-            qDebug() << "   text_mdl = " << text_mdl << ", text_prop = " << text_prop << "\n";
 
             if (text_prop == String_Params) {
                 tableDBModel = mySokratDB_->GetItemModel_ModuleProperties(text_mdl, EModuleFields::PARAMS);
@@ -65,11 +44,9 @@ void View_DB_Sokrat3::handlerItemClick_TreeView(const QModelIndex &index) {
             }
             ui->tableView->setModel(tableDBModel);
         }
-    qDebug() << " ***** конец запроса ****** " << "\n";
 }
 
 void View_DB_Sokrat3::on_buttonBox_accepted()
 {
-    //qDebug() << "Press Save to create SQL Model" << "\n";
     isSave_SokratDB = true;
 }

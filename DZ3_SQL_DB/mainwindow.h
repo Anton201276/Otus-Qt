@@ -9,6 +9,7 @@
 
 #include "sokrat3_db.h"
 #include "view_db_sokrat3.h"
+#include "sokratdbdelegate.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,7 +27,7 @@ public slots:
     void Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel);
     //void Slot_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
     void Slot_GetDB_SokratDBModel(Sokrat3_DB* sokratDB);
-    void Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable, QAbstractItemDelegate* delegate);
+    void Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable, DelegateMode mode_delegate);
 
 signals:
     void Signal_CreateDBFromFiles(const QString& path);

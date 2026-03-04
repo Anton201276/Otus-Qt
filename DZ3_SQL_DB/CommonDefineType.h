@@ -103,4 +103,9 @@ inline const QString sqlist_user = "SQListUserModules";
 inline const QString sqlDB_MainDesc = "MainDescription";
 inline const QString sqlDB_ModuleFieldDesc = "ModuleFieldDescription";
 
+enum DelegateMode {
+    ReadOnlyAll,        // запретить всё
+    EditColumns3to5     // разрешить только 3-5
+};
+
 #endif // COMMONDEFINETYPE_H

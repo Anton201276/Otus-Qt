@@ -165,7 +165,7 @@ bool Sokrat3_DB::ParsePropertiesModule(QVector<SPropertyDesc>& module_properties
 
     for(quint16 j = 0; j < numProperties; ++j) {
         SPropertyDesc tmpDesc;
-        tmpDesc.Address = j + 100;
+        tmpDesc.Address = j + 1000;
         tmpDesc.Desc = strings_ModuleDesc[cReadStrings++];
         cReadStrings++;
 
@@ -404,7 +404,6 @@ bool Sokrat3_DB::OpenSqliteDB(const QString& db_path){
         return false;
     }
 
-    qDebug() << "Try open Sql DB - " << db_path << "\n";
     bool isOk = createSqlTreeModel(sqlDB);
 
     if (!isOk) {
@@ -767,21 +766,18 @@ bool Sokrat3_DB::addItemSqlTreeModel(const QSqlDatabase& dbc, QStandardItem* roo
 
         if (cParams > 0) {
             QStandardItem* propItem = new QStandardItem(String_Params);
-            //propItem->setData(name, Qt::UserRole);
             propItem->setData(Sql_Params, Qt::UserRole);
             moduleItem->appendRow(propItem);
         }
 
         if (cCommands > 0) {
             QStandardItem* propItem = new QStandardItem(String_Commands);
-            //propItem->setData(name, Qt::UserRole);
             propItem->setData(Sql_Commands, Qt::UserRole);
             moduleItem->appendRow(propItem);
         }
 
         if (cSignals > 0) {
             QStandardItem* propItem = new QStandardItem(String_Signals);
-            //propItem->setData(name, Qt::UserRole);
             propItem->setData(Sql_Signals, Qt::UserRole);
             moduleItem->appendRow(propItem);
         }
@@ -805,13 +801,7 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
     if (depth == 0) {
         sqlDB_TableModel_->setTable(sqlDB_MainDesc);
         sqlDB_TableModel_->select();
-        //delegateTable_.reset(new EditUnabledAllCellDelegate());
-        if (delegateTable_) {
-            delete delegateTable_;
-            delegateTable_ = nullptr;
-        }
-        delegateTable_ = new EditUnabledAllCellDelegate();
-        qDebug() << "Обновили делегат: \n";
+        mode = DelegateMode::ReadOnlyAll;
     }
     else if (depth == 1) {
         QString table;
@@ -823,14 +813,7 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
         }
         sqlDB_TableModel_->setTable(table);
         sqlDB_TableModel_->select();
-        //delegateTable_.reset(new EditUnabledAllCellDelegate());
-        if (delegateTable_) {
-            delete delegateTable_;
-            delegateTable_ = nullptr;
-        }
-        delegateTable_ = new EditUnabledAllCellDelegate();
-        qDebug() << "Обновили делегат: \n";
-
+        mode = DelegateMode::ReadOnlyAll;
     }
     else if (depth == 2) {
 
@@ -897,14 +880,7 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
 
         sqlDB_TableModel_->setTable(sqlDB_ModuleFieldDesc);
         sqlDB_TableModel_->select();
-        //delegateTable_.reset(new EditUnabledAllCellDelegate());
-        if (delegateTable_) {
-            delete delegateTable_;
-            delegateTable_ = nullptr;
-        }
-        delegateTable_ = new EditUnabledAllCellDelegate();
-
-        qDebug() << "Обновили делегат: \n";
+        mode = DelegateMode::ReadOnlyAll;
 
     }
     else if (depth == 3) {
@@ -913,15 +889,7 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
         fieldTable = parent_id.data(Qt::UserRole).toString() + fieldTable;
         sqlDB_TableModel_->setTable(fieldTable);
         sqlDB_TableModel_->select();
-
-        if (delegateTable_) {
-            delete delegateTable_;
-            delegateTable_ = nullptr;
-        }
-        delegateTable_ = new ColumnRestrictedDelegate();
-
-        //delegateTable_.reset(new ColumnRestrictedDelegate());
-        qDebug() << "Обновили делегат: \n";
+        mode = DelegateMode::EditColumns3to5;
     }
     else {
         return nullptr;
@@ -929,6 +897,6 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
     return sqlDB_TableModel_;
 }
 
-QAbstractItemDelegate* Sokrat3_DB::getDelegateTable() const {
-    return delegateTable_;
+DelegateMode Sokrat3_DB::getModeDelegateTable() const {
+    return mode;
 }

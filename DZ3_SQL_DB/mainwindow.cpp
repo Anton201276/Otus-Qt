@@ -49,10 +49,12 @@ void MainWindow::handlerItemClick_TreeView(const QModelIndex &index) {
     emit Signal_GiveDB_TableSqlModel(index);
 }
 
-void MainWindow::Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable, QAbstractItemDelegate* delegate) {
+void MainWindow::Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable, DelegateMode mode_delegate) {
     if (sqlDBTable != nullptr) {
         ui->tableView->setModel(sqlDBTable);
-        ui->tableView->setItemDelegate(delegate);
+        ui->tableView->setItemDelegate(new SmartTableDelegate(
+                                           mode_delegate,
+                                           ui->tableView));
     }
     else {
         qDebug() << "Load QTableView on Mainwindow - Bad" << "\n";
