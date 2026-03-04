@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QStringListModel>
+#include <QStyledItemDelegate>
 
 #include "sokrat3_db.h"
 #include "view_db_sokrat3.h"
@@ -25,7 +26,7 @@ public slots:
     void Slot_GetDB_TreeViewModel(QStandardItemModel* rootModel);
     //void Slot_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
     void Slot_GetDB_SokratDBModel(Sokrat3_DB* sokratDB);
-    void Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable);
+    void Slot_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable, QAbstractItemDelegate* delegate);
 
 signals:
     void Signal_CreateDBFromFiles(const QString& path);
@@ -39,7 +40,6 @@ signals:
 private slots:
     void on_action_exit_app_triggered();
     void on_action_ESC_Config_triggered();
-
     void on_action_open_DB_SQL_triggered();
 
 private:

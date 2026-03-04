@@ -10,8 +10,10 @@
 #include <QStandardItemModel>
 #include <QtSql>
 #include <QSqlDatabase>
+#include <QScopedPointer>
 
 #include "CommonDefineType.h"
+#include "sokratdbdelegate.h"
 
 
 class Sokrat3_DB
@@ -32,7 +34,8 @@ public:
     }
 
     void createSQLite_SokratDB();
-    bool OpenSqliteDB(const QString& db_path);
+    QAbstractItemDelegate* getDelegateTable() const;
+
 
 private:
     bool CreateDB_FromFiles();
@@ -49,7 +52,7 @@ private:
     void LoadDB_ModuleItemTableView(const QString& mdl, EModuleFields field, const QVector<SPropertyDesc>& mdl_prop);
     QList<QStandardItem*> LoadDB_RowProperties(const SPropertyDesc& property);
 
-
+    bool OpenSqliteDB(const QString& db_path);
     bool copyModelToSqlTable(const QSqlDatabase& db, const QString& tableName);
     bool createMainSqlTable(const QSqlDatabase& dbc);
     bool createPlantUserSqlTable(const QSqlDatabase& dbc, const QString field);
@@ -76,6 +79,8 @@ private:
     QStandardItem SqlDB_TreeRootItem_;
     QSqlDatabase sqlDB_;
     QSqlTableModel* sqlDB_TableModel_;
+    //QScopedPointer<QAbstractItemDelegate> delegateTable_;
+    QAbstractItemDelegate* delegateTable_;
 
     bool dbIsOk_ = false;
     bool dbSqlIsOk_ = false;

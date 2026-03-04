@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
 
     QObject::connect(&controller_db, SIGNAL(Signal_GetDB_TreeViewModel(QStandardItemModel*)), &w, SLOT(Slot_GetDB_TreeViewModel(QStandardItemModel*)));
     QObject::connect(&controller_db, SIGNAL(Signal_GetDB_SokratDBModel(Sokrat3_DB*)), &w, SLOT(Slot_GetDB_SokratDBModel(Sokrat3_DB*)));
-    QObject::connect(&controller_db, SIGNAL(Signal_GetDB_SqlDBModel(QSqlTableModel*)), &w, SLOT(Slot_GetDB_SqlDBModel(QSqlTableModel*)));
+    QObject::connect(&controller_db, SIGNAL(Signal_GetDB_SqlDBModel(QSqlTableModel*, QAbstractItemDelegate*)),
+                     &w, SLOT(Slot_GetDB_SqlDBModel(QSqlTableModel*, QAbstractItemDelegate*)));
 
 
     return a.exec();

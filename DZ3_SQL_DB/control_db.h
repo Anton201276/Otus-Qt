@@ -23,7 +23,7 @@ signals:
     void Signal_GetDB_TreeViewModel(QStandardItemModel* rootModel);
     void Signal_GetDB_ModuleTableModel(QStandardItemModel* propertiesModel);
     void Signal_GetDB_SokratDBModel(Sokrat3_DB* sokratDB);
-    void Signal_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable);
+    void Signal_GetDB_SqlDBModel(QSqlTableModel* sqlDBTable, QAbstractItemDelegate* delegate);
 
 
 private:

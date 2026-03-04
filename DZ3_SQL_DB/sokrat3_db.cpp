@@ -7,10 +7,13 @@ Sokrat3_DB::Sokrat3_DB(const QString& db_path): db_path_(db_path){
 
     if (ext == "stm") {
         SModuleDataBase SDataBase;
-        dbIsOk_ = CreateItemModelDB_FromFiles(SDataBase);
+        dbIsOk_ = CreateItemModelDB_FromFiles(SDataBase);     
     }
     else if (ext == "db") {
-        dbSqlIsOk_ = OpenSqliteDB(db_path);
+        dbSqlIsOk_ = OpenSqliteDB(db_path);   
+    }
+    else {
+        qDebug() << "Ошибка создания или открытия БД /n";
     }
 }
 
@@ -707,8 +710,6 @@ bool Sokrat3_DB::createPlantUserSqlTable(const QSqlDatabase& dbc, const QString 
 
 bool Sokrat3_DB::createSqlTreeModel(const QSqlDatabase& dbc){
 
-    qDebug() << "Come in to Create TreeModel \n";
-
     QSqlQuery query(dbc);
     QString query_tab = "SELECT * FROM MainDescription";
 
@@ -717,23 +718,12 @@ bool Sokrat3_DB::createSqlTreeModel(const QSqlDatabase& dbc){
         return false;
     }
 
-    qDebug() << "Done query to MainDescription \n";
-
     query.first();
     QSqlRecord rec = query.record();
     QString sokrat_name = query.value(rec.indexOf("Имя")).toString();
 
-    qDebug() << "Quered sokrat_name" << sokrat_name << "\n";
-
-    SokratTree_ItemModel_
-
     SqlDB_TreeRootItem_.setText(sokrat_name);
-
-    qDebug() << "setText " << sokrat_name << "\n";
-
     SqlDB_TreeRootItem_.setRowCount(2);
-
-    qDebug() << "Set sokrat_name \n";
 
     QStandardItem* plantItem = new QStandardItem("Настройки изготовителя");
     QStandardItem* userItem = new QStandardItem("Настройки пользователя");
@@ -741,8 +731,6 @@ bool Sokrat3_DB::createSqlTreeModel(const QSqlDatabase& dbc){
     SqlDB_TreeRootItem_.setChild(1,0,userItem);
     SqlDB_TreeItemModel_.appendRow(&SqlDB_TreeRootItem_);
     SqlDB_TreeItemModel_.setHorizontalHeaderLabels({"База данных контроллера Сократ-3"});
-
-    qDebug() << "Created RootItem \n";
 
     addItemSqlTreeModel(dbc, plantItem, sqlist_plant);
     addItemSqlTreeModel(dbc, userItem, sqlist_user);
@@ -817,20 +805,31 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
     if (depth == 0) {
         sqlDB_TableModel_->setTable(sqlDB_MainDesc);
         sqlDB_TableModel_->select();
-        qDebug() << "Запрос к контроллеру" << "\n";
+        //delegateTable_.reset(new EditUnabledAllCellDelegate());
+        if (delegateTable_) {
+            delete delegateTable_;
+            delegateTable_ = nullptr;
+        }
+        delegateTable_ = new EditUnabledAllCellDelegate();
+        qDebug() << "Обновили делегат: \n";
     }
     else if (depth == 1) {
         QString table;
         if (index.row() == 0) {
             table = sqlist_plant;
-            qDebug() << "Запрос к таблице завода" << "\n";
         }
         else {
             table = sqlist_user;
-            qDebug() << "Запрос к таблице пользователя" << "\n";
         }
         sqlDB_TableModel_->setTable(table);
         sqlDB_TableModel_->select();
+        //delegateTable_.reset(new EditUnabledAllCellDelegate());
+        if (delegateTable_) {
+            delete delegateTable_;
+            delegateTable_ = nullptr;
+        }
+        delegateTable_ = new EditUnabledAllCellDelegate();
+        qDebug() << "Обновили делегат: \n";
 
     }
     else if (depth == 2) {
@@ -843,11 +842,9 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
 
         if (index.parent().row() == 0) {
             query_pat2 = sqlist_plant;
-            qDebug() << "Запрос к таблице модуля завода - " << query_pat2 << "\n";
         }
         else {
             query_pat2 = sqlist_user;
-            qDebug() << "Запрос к таблице модуля пользователя - " << query_pat2 << "\n";
         }
 
         query_pat4 = index.data(Qt::UserRole).toString();
@@ -900,15 +897,38 @@ QSqlTableModel* Sokrat3_DB::GetItemModel_FromSqlDataBase(const QModelIndex& inde
 
         sqlDB_TableModel_->setTable(sqlDB_ModuleFieldDesc);
         sqlDB_TableModel_->select();
+        //delegateTable_.reset(new EditUnabledAllCellDelegate());
+        if (delegateTable_) {
+            delete delegateTable_;
+            delegateTable_ = nullptr;
+        }
+        delegateTable_ = new EditUnabledAllCellDelegate();
+
+        qDebug() << "Обновили делегат: \n";
 
     }
     else if (depth == 3) {
-        //Qt::UserRole
         QString fieldTable = index.data(Qt::UserRole).toString();
         QModelIndex parent_id = index.parent();
         fieldTable = parent_id.data(Qt::UserRole).toString() + fieldTable;
         sqlDB_TableModel_->setTable(fieldTable);
         sqlDB_TableModel_->select();
+
+        if (delegateTable_) {
+            delete delegateTable_;
+            delegateTable_ = nullptr;
+        }
+        delegateTable_ = new ColumnRestrictedDelegate();
+
+        //delegateTable_.reset(new ColumnRestrictedDelegate());
+        qDebug() << "Обновили делегат: \n";
+    }
+    else {
+        return nullptr;
     }
     return sqlDB_TableModel_;
+}
+
+QAbstractItemDelegate* Sokrat3_DB::getDelegateTable() const {
+    return delegateTable_;
 }

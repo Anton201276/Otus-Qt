@@ -27,6 +27,7 @@ HEADERS += \
     control_db.h \
     mainwindow.h \
     sokrat3_db.h \
+    sokratdbdelegate.h \
     view_db_sokrat3.h
 
 FORMS += \
