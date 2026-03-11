@@ -1,0 +1,105 @@
+import QtQuick 2.0
+import Sailfish.Silica 1.0
+
+Page {
+    objectName: "mainPage"
+    allowedOrientations: Orientation.All
+    id: page
+
+    PageHeader {
+        objectName: "pageHeader"
+        title: qsTr("ДЗ №6 ОС Аврора")
+        description: qsTr("Компоненты Silica")
+        extraContent.children: [
+            IconButton {
+                objectName: "aboutButton"
+                icon.source: "image://theme/icon-m-about"
+                anchors.verticalCenter: parent.verticalCenter
+
+                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+            }
+        ]
+    }
+
+    Column {
+        anchors.centerIn: parent
+        width: parent.width - 2 * Theme.horizontalPageMargin
+
+        Label {
+            width: parent.width
+            text: qsTr("Введите логин")
+            font.pixelSize: Theme.fontSizeExtraLarge
+        }
+
+        Label {
+            width: parent.width
+            text: qsTr("и номер телефона")
+            font.pixelSize: Theme.fontSizeExtraLarge
+        }
+
+        Item {
+            width: page.width
+            height: 40
+        }
+
+        TextField {
+            id: tf_login
+            width: parent.width
+            placeholderText: qsTr("буквы и цифры")
+            validator: RegExpValidator {
+                    regExp: /^[a-zA-Z0-9]{8,20}$/
+            }
+            EnterKey.enabled: !errorHighlight
+            EnterKey.iconSource: "image://theme/icon-m-enter-next"
+            EnterKey.onClicked: tf_telephone.focus = true
+        }
+
+        TextField {
+            id: tf_telephone
+            width: parent.width
+            placeholderText: qsTr("+7-999-999-9999")
+
+            validator: RegExpValidator {
+                    regExp: /^\+?[0-9\s\-\(\)]{14,14}$/
+                }
+            inputMethodHints: Qt.ImhDialableCharactersOnly
+
+            onTextChanged: {
+               if (length == 6 || length == 10) {
+                   text = text + "-"
+               }
+               if (length == 15) {
+                   btn_enter.enabled = true
+               }
+               else {
+                   btn_enter.enabled = false
+               }
+            }
+
+            onClicked:  {
+                if (length == 0) {
+                    text = "+7-"
+                }
+            }
+
+            onActiveFocusChanged: {
+                if (activeFocus && length == 0) {
+                    text = "+7-"
+                }
+            }
+        }
+
+        Button {
+            id:btn_enter
+            enabled: false
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Зарегистрироваться")
+            color: "#FFFFFF"
+            highlightBackgroundColor: Theme.secondaryColor
+            onClicked: {
+                pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
+                console.log("Button clicked")
+            }
+        }
+    }
+}
