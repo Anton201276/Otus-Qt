@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=ru.template.DiplomaApp
+Exec=/usr/bin/ru.template.DiplomaApp
+Name=Template
+Name[ru]=Шаблон
+
+[X-Application]
+Permissions=Documents;Downloads;PublicDir
+OrganizationName=ru.template
+ApplicationName=DiplomaApp
+ExecDBus=/usr/bin/ru.template.DiplomaApp
