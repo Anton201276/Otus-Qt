@@ -1,0 +1,22 @@
+TARGET = ru.template.DiplomaApp
+
+CONFIG += \
+    auroraapp
+
+PKGCONFIG += \
+
+SOURCES += \
+    src/main.cpp \
+
+HEADERS += \
+
+DISTFILES += \
+    rpm/ru.template.DiplomaApp.spec \
+
+AURORAAPP_ICONS = 86x86 108x108 128x128 172x172
+
+CONFIG += auroraapp_i18n
+
+TRANSLATIONS += \
+    translations/ru.template.DiplomaApp.ts \
+    translations/ru.template.DiplomaApp-ru.ts \
