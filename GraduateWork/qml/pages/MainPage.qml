@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import QtQuick.Layouts 1.1
 
 Page {
     objectName: "mainPage"
@@ -42,13 +43,13 @@ Page {
        anchors.topMargin: 20
        anchors.left: parent.left
        anchors.leftMargin: 50
-       anchors.horizontalCenter: parent.anchors.horizontalCenter
-       label: "электропривода"
+       anchors.horizontalCenter: parent.horizontalCenter
+       label: "подключения"
        currentIndex: 0
        menu: ContextMenu {
-           MenuItem { text: "Линейный" }
-           MenuItem { text: "Четвертьоборотный" }
-           MenuItem { text: "Многооборотный" }
+           MenuItem { text: "BlueTooth" }
+           MenuItem { text: "IrDA" }
+           MenuItem { text: "USB/RS485" }
       }
     }
 
@@ -64,19 +65,43 @@ Page {
         valueText: value + "%"
     }
 
-    Button {
-       id: id_btn_start
-       text: "Подключиться"
-       anchors.horizontalCenter: parent.horizontalCenter
-       anchors.top: id_pb_connect.bottom
-       anchors.topMargin: 20
-       onClicked: {
-           id_pb_connect.value = 0
-           id_connect_Timer.running = true
-           id_lbl_fake.visible = true
-           console.log(dataFilePath, " Тип ЭП - ", id_cb_type.value)
-       }
+    ButtonLayout {
+        anchors.top: id_pb_connect.bottom
+        anchors.topMargin: 30
+        anchors.horizontalCenter: parent.horizontalCenter
+        Button {
+           id: id_btn_connect
+           text: "Подключиться"
+
+
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               id_pb_connect.value = 0
+               id_connect_Timer.running = true
+               id_lbl_fake.visible = true
+               console.log(dataFilePath, " Тип ЭП - ", id_cb_type.value)
+           }
+        }
+
+        Button {
+           id: id_btn_settigs
+           text: "Настройки"
+           //anchors.horizontalCenter: parent.horizontalCenter
+           //anchors.top: id_pb_connect.bottom
+           //anchors.topMargin: 30
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               id_pb_connect.value = 0
+               id_connect_Timer.running = true
+               id_lbl_fake.visible = true
+               console.log(dataFilePath, " Тип ЭП - ", id_cb_type.value)
+           }
+        }
     }
+
+
 
     Timer {
         id: id_connect_Timer
@@ -102,18 +127,292 @@ Page {
         anchors.top:id_btn_start.bottom
         anchors.topMargin: 50
         width: parent.width
-        text: qsTr("Параметры ЭП")
+        text: qsTr("Основные параметры ЭП")
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Theme.fontSizeExtraLarge
         visible: true
 
     }
 
+    property int top_margin_item: 30
+    property int left_margin_item: 30
+    property int right_margin_item: 30
+
+    ColumnLayout {
+        id: id_clm_lyt
+        anchors.top: id_lbl_titleParams.bottom
+        anchors.topMargin: top_margin_item
+        width: parent.width
+        spacing: 60
+
+        Row {
+            id: id_row_DataDrive
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            spacing: 15
+
+            Label {
+                id: id_lbl_DataDrive
+                anchors.left: parent.left
+                anchors.leftMargin: left_margin_item
+                text: qsTr("Дата изготов - ")
+                font.pixelSize: Theme.fontSizeExtraLarge
+            }
+
+            TextField {
+                id: id_tf_DataDrive
+                width: parent.width - id_lbl_DataDrive.width - left_margin_item - right_margin_item
+                anchors.right: parent.right
+                anchors.rightMargin: right_margin_item
+                placeholderText: "ГГГГ/ММ/ДД"
+                horizontalAlignment: TextInput.AlignRight
+                readOnly: true
+            }
+        }
+
+        Row {
+            id: id_row_TypeDrive
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            spacing: 15
+
+            Label {
+                id: id_lbl_TypeDrive
+                anchors.left: parent.left
+                anchors.leftMargin: left_margin_item
+                text: qsTr("Тип привода - ")
+                font.pixelSize: Theme.fontSizeExtraLarge
+            }
+
+            TextField {
+                id: id_tf_TypeDrive
+                width: parent.width - id_lbl_DataDrive.width - left_margin_item - right_margin_item
+                anchors.right: parent.right
+                anchors.rightMargin: right_margin_item
+                placeholderText: "Л/В/П"
+                horizontalAlignment: TextInput.AlignRight
+                readOnly: true
+            }
+        }
+
+        Row {
+            id: id_row_TorqueDrive
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            spacing: 15
+
+            Label {
+                id: id_lbl_TorqueDrive
+                anchors.left: parent.left
+                anchors.leftMargin: left_margin_item
+                text: qsTr("Макс. момент ЭП, Н*м - ")
+                font.pixelSize: Theme.fontSizeExtraLarge
+            }
+
+            TextField {
+                id: id_tf_TorqueDrive
+                width: parent.width - id_lbl_DataDrive.width - left_margin_item - right_margin_item
+                anchors.right: parent.right
+                anchors.rightMargin: right_margin_item
+                placeholderText: "99999"
+                horizontalAlignment: TextInput.AlignRight
+                readOnly: true
+            }
+        }
+
+        Row {
+            id: id_row_SpeedDrive
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            spacing: 15
+
+            Label {
+                id: id_lbl_SpeedDrive
+                anchors.left: parent.left
+                anchors.leftMargin: left_margin_item
+                text: qsTr("Макс. скор. ЭП, об/мин - ")
+                font.pixelSize: Theme.fontSizeExtraLarge
+            }
+
+            TextField {
+                id: id_tf_SpeedDrive
+                width: parent.width - id_lbl_DataDrive.width - left_margin_item - right_margin_item
+                anchors.right: parent.right
+                anchors.rightMargin: right_margin_item
+                placeholderText: "99999"
+                horizontalAlignment: TextInput.AlignRight
+                readOnly: true
+            }
+        }
+
+        Row {
+            id: id_row_SpeedMotor
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            spacing: 15
+
+            Label {
+                id: id_lbl_SpeedMotor
+                anchors.left: parent.left
+                anchors.leftMargin: left_margin_item
+                text: qsTr("Ном. скор ЭД, об/мин - ")
+                font.pixelSize: Theme.fontSizeExtraLarge
+            }
+
+            TextField {
+                id: id_tf_SpeedMotor
+                //width: parent.width - id_lbl_DataDrive.width - left_margin_item - right_margin_item
+                anchors.right: parent.right
+                anchors.rightMargin: right_margin_item
+                placeholderText: "99999"
+                horizontalAlignment: TextInput.AlignRight
+                readOnly: true
+            }
+        }
+
+        Row {
+            id: id_row_CurrentMotor
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            spacing: 15
+
+            Label {
+                id: id_lbl_CurrentMotor
+                anchors.left: parent.left
+                anchors.leftMargin: left_margin_item
+                text: qsTr("Ном. ток ЭД, А - ")
+                font.pixelSize: Theme.fontSizeExtraLarge
+            }
+
+            TextField {
+                id: id_tf_CurrentMotor
+                //width: parent.width - id_lbl_DataDrive.width - left_margin_item - right_margin_item
+                anchors.right: parent.right
+                anchors.rightMargin: right_margin_item
+                placeholderText: "99999"
+                horizontalAlignment: TextInput.AlignRight
+                readOnly: true
+            }
+        }
+    }
+
+
+
+//    RowLayout  {
+//        id: id_row_DataDrive
+//        anchors.top:id_lbl_titleParams.bottom
+//        anchors.topMargin: top_margin_item
+//        width: parent.width
+
+//        Label {
+//            id: id_lbl_DataDrive
+
+//            anchors.left: parent.left
+//            anchors.leftMargin: left_margin_item
+//            text: qsTr("Дата изгов - ")
+//            horizontalAlignment: Text.AlignLeft
+//            font.pixelSize: Theme.fontSizeExtraLarge
+//            visible: true
+//        }
+
+//        TextField {
+//            id:id_tf_DataDrive
+//            //width: parent.width - id_lbl_DataDrive.width - left_margin_item - right_margin_item  // Вычисляем ширину
+//            Layout.fillWidth: true
+//            anchors.right: parent.right
+//            anchors.rightMargin: right_margin_item
+//            placeholderText: "ГГГГ/ММ/ДД"
+//            horizontalAlignment : TextInput.AlignRight
+//            readOnly : true
+//        }
+//    }
+
+//    RowLayout {
+//        id: id_row_DataDrive
+//        anchors.top: id_lbl_titleParams.bottom
+//        anchors.topMargin: top_margin_item
+//        width: parent.width
+
+//        Label {
+//            id: id_lbl_DataDrive
+//            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter  // выравнивание по левому краю и центру по вертикали
+//            Layout.leftMargin: left_margin_item
+//            text: qsTr("Дата изгов - ")
+//            horizontalAlignment: Text.AlignLeft
+//            font.pixelSize: Theme.fontSizeExtraLarge
+//            visible: true
+//        }
+
+//        TextField {
+//            id: id_tf_DataDrive
+//            Layout.fillWidth: true  // занимает всё оставшееся пространство
+//            Layout.rightMargin: right_margin_item
+//            placeholderText: "ГГГГ/ММ/ДД"
+//            horizontalAlignment: TextInput.AlignRight
+//            readOnly: true
+//            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter  // выравнивание по правому краю и центру по вертикали
+//        }
+//    }
+
+
+
+
+
+//    Label {
+//        id: id_lbl_TorqueDrive
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.top:id_lbl_DataDrive.bottom
+//        anchors.topMargin: top_margin_item
+//        anchors.left: parent.left
+//        anchors.leftMargin: left_margin_item
+//        //width: parent.width
+//        text: qsTr("Момент Н*м - ")
+//        horizontalAlignment: Text.AlignLeft
+//        font.pixelSize: Theme.fontSizeExtraLarge
+//    }
+
+//    TextField {
+//        id:id_tf_TorqueDrive
+//        anchors.right: parent.right
+//        anchors.rightMargin: right_margin_item
+//        anchors.top: id_lbl_DataDrive.bottom
+//        anchors.topMargin: top_margin_item
+//        placeholderText: "99999"
+//        horizontalAlignment : TextInput.AlignRight
+//        readOnly : true
+//    }
+
+//    Label {
+//        id: id_lbl_SpeedDrive
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.top:id_lbl_TorqueDrive.bottom
+//        anchors.topMargin: top_margin_item
+//        anchors.left: parent.left
+//        anchors.leftMargin: left_margin_item
+//        //width: parent.width
+//        text: qsTr("Момент Н*м - ")
+//        horizontalAlignment: Text.AlignLeft
+//        font.pixelSize: Theme.fontSizeExtraLarge
+//    }
+
+//    TextField {
+//        id:id_tf_SpeedDrive
+//        anchors.right: parent.right
+//        anchors.rightMargin: right_margin_item
+//        anchors.top: id_lbl_TorqueDrive.bottom
+//        anchors.topMargin: top_margin_item
+//        placeholderText: "99999"
+//        horizontalAlignment : TextInput.AlignRight
+//        readOnly : true
+//    }
+
     Button {
        id: id_btn_next
        anchors.horizontalCenter: parent.horizontalCenter
        anchors.bottom: parent.bottom
        anchors.bottomMargin: 50
+       border.color :  "#1199AA"
+       border.highlightColor: "#FF00FF"
        text: "Далее"
        onClicked: console.log(dataFilePath, " Тип ЭП - ", id_cb_type.value)
     }
