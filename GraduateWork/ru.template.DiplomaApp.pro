@@ -11,6 +11,10 @@ SOURCES += \
 HEADERS += \
 
 DISTFILES += \
+    qml/pages/ConnectSettings.qml \
+    qml/pages/ControlPage.qml \
+    qml/pages/SimulationModelDriver.qml \
+    qml/pages/UserParamsPage.qml \
     rpm/ru.template.DiplomaApp.spec \
 
 AURORAAPP_ICONS = 86x86 108x108 128x128 172x172
