@@ -6,4 +6,7 @@ ApplicationWindow {
     initialPage: Qt.resolvedUrl("pages/MainPage.qml")
     cover: Qt.resolvedUrl("cover/DefaultCoverPage.qml")
     allowedOrientations: defaultAllowedOrientations
+
+    signal messageSent(string text)
+    signal dataSent(string name, int age)
 }
