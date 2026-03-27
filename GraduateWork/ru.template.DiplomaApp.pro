@@ -6,9 +6,11 @@ CONFIG += \
 PKGCONFIG += \
 
 SOURCES += \
+    src/controlsimulator.cpp \
     src/main.cpp \
 
 HEADERS += \
+    src/controlsimulator.h
 
 DISTFILES += \
     qml/pages/ConnectSettings.qml \
