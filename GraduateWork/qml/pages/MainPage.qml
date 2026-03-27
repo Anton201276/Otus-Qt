@@ -267,18 +267,46 @@ Page {
         }
     }
 
-    Button {
-       id: id_btn_next
-       anchors.horizontalCenter: parent.horizontalCenter
-       anchors.bottom: parent.bottom
-       anchors.bottomMargin: 50
-       border.color :  "#1199AA"
-       border.highlightColor: "#FF00FF"
-       text: "Далее"
-       onClicked: {
-           pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
-           console.log("Далее clicked")
-       }
+//    Button {
+//       id: id_btn_next
+//       anchors.horizontalCenter: parent.horizontalCenter
+//       anchors.bottom: parent.bottom
+//       anchors.bottomMargin: 50
+//       border.color :  "#1199AA"
+//       border.highlightColor: "#FF00FF"
+//       text: "Далее"
+//       onClicked: {
+//           pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
+//           console.log("Далее clicked")
+//       }
+//    }
+
+    ButtonLayout {
+        id: id_btn_layout_next
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        Button {
+           id: id_btn_control_drive
+           text: "Управление"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
+               console.log("ControlPage clicked")
+           }
+        }
+
+        Button {
+           id: id_btn_user_settigs
+           text: "Параметры"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
+               console.log("UserParamsPage clicked")
+           }
+        }
     }
 
 
