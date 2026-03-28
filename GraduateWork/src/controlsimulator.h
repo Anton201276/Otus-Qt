@@ -17,7 +17,7 @@ public slots:  // 4. Слоты для вызова из QML
     }
 
     void onDataReceived(const QString &name, int age) {
-        qDebug() << "Получены данные из QML::" << name << ", возраст:" << age;
+        qDebug() << "Получены данные из QML::" << name << ", номер:" << age;
     }
 
 signals:  // 5. Сигналы для обратной связи (опционально)

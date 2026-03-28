@@ -1,5 +1,7 @@
 TARGET = ru.template.DiplomaApp
 
+QT += sql
+
 CONFIG += \
     auroraapp
 
@@ -8,9 +10,11 @@ PKGCONFIG += \
 SOURCES += \
     src/controlsimulator.cpp \
     src/main.cpp \
+    src/sokrat3_db.cpp
 
 HEADERS += \
-    src/controlsimulator.h
+    src/controlsimulator.h \
+    src/sokrat3_db.h
 
 DISTFILES += \
     qml/pages/ConnectSettings.qml \

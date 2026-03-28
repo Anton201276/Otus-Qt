@@ -79,6 +79,7 @@ Page {
            onClicked: {
                id_pb_connect.value = 0
                id_connect_Timer.running = true
+               messageSent(dataFilePath)
                console.log(dataFilePath, " Тип ЭП - ", id_cb_type.value)
            }
         }
@@ -90,6 +91,7 @@ Page {
            border.highlightColor: "#FF99FF"
            onClicked: {
                pageStack.push(Qt.resolvedUrl("ConnectSettings.qml"))
+               dataSent(id_cb_type.value, id_cb_type.currentIndex)
                console.log("Button clicked")
            }
         }
