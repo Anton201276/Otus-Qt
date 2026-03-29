@@ -5,6 +5,9 @@
 #include <QSqlDatabase>
 #include <QHash>
 #include <QVector>
+#include <QFile>
+#include <QDir>
+#include <QVariant>
 
 class Sokrat3_DB
 {
@@ -20,11 +23,11 @@ class Sokrat3_DB
                        "Название TEXT NOT NULL, "
                        "Значение INTEGER NOT NULL, "
                        "Минимальное INTEGER NOT NULL, "
-                       "Максимальное INTEGER NOT NULL, "
+                       "Максимальное INTEGER NOT NULL"
                        ")";
 
-    const QVector<QString> module_name_ = {"mdlParamsBlock", "mdlParamsDrive", "mdlParamsDefence", "mdlParamsTorque", "mdlParamsValve", "mdlParamsControl", "mdlBlockSignals"};
-    const QHash<QString,QString> list_modules_desc_ = {{"mdlParamsBlock", "Парам блок"},
+    const QVector<QString> list_module_name_ = {"mdlParamsBlock", "mdlParamsDrive", "mdlParamsDefence", "mdlParamsTorque", "mdlParamsValve", "mdlParamsControl", "mdlBlockSignals"};
+    const QHash<QString,QString> hash_modules_desc_ = {{"mdlParamsBlock", "Парам блок"},
                                                  {"mdlParamsDrive", "Парам привода"},
                                                  {"mdlParamsDefence", "Парам защит"},
                                                  {"mdlParamsTorque", "Парам момент"},
@@ -36,7 +39,7 @@ class Sokrat3_DB
 
 
     const QHash<QString,QVector<QString>> hash_params_desc_ = {
-        {"mdlParamsBlock", {"Блок №", "Число", "Месяц", "Год", "Тип"}},
+        {"mdlParamsBlock", {"Блок №", "Число", "Месяц", "Год", "Схема"}},
         {"mdlParamsDrive", {"Тип", "Мощность ЭД", "Скорость ЭД", "Ток фазы ЭД", "Момент ЭП", "Скорость ЭП"}},
         {"mdlParamsDefence", {"Напр мин", "Напр макс", "Ток %мин", "Ток %макс", "Темпр мин", "Темпр макс"}},
         {"mdlParamsTorque", {"Зона МВЗ", "Зона МВО", "Момент МВЗ", "Момент МВО", "Момент МВП", "Время МВ"}},
@@ -76,29 +79,27 @@ class Sokrat3_DB
     };
 
     QString db_pathname_;
+    QString db_file_name_;
     bool dbSqlIsOk_ = false;
     QSqlDatabase sqlDB_;
+    QSqlQuery query_record_;
+    int row_size_;
+
+
 
 public:
     Sokrat3_DB(const QString& db_pathname);
+    const QString Get_DB_FileName() const;
+    const QString Get_SQLDB_Name_ByNumber(int) const;
+    int Execute_QueryDB_ByName(const QString& db_name) ;
+    QVariant Get_Value_ByIndex(int, const QString&);
 
 private:
     bool OpenSqliteDB();
     bool createAllSqlTable(const QSqlDatabase& sqlDB);
-    bool createPlantParamsTable(const QSqlDatabase& sqlDB);
-    bool createUserParamsTable(const QSqlDatabase& sqlDB);
-    bool createBlockSignalsTable(const QSqlDatabase& sqlDB);
+
+
 
 };
 
 #endif // SOKRAT3_DB_H
-
-//    const QString db_query_part2_params_block_ = "Парам блок";
-//    const QString db_query_part2_params_drive_ = "";
-
-//    const QString db_query_part2_params_defence_ = "";
-//    const QString db_query_part2_params_control_ = "Парам реле";
-//    const QString db_query_part2_params_torque_ = "Парам ";
-//    const QString db_query_part2_params_valve_ = "Парам движен";
-
-//    const QString db_query_part2_signals_block_ = "Сигналы блока";

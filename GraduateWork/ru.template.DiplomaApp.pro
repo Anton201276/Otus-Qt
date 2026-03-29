@@ -19,6 +19,7 @@ HEADERS += \
 DISTFILES += \
     qml/pages/ConnectSettings.qml \
     qml/pages/ControlPage.qml \
+    qml/pages/ListModelValue.qml \
     qml/pages/SimulationModelDriver.qml \
     qml/pages/UserParamsPage.qml \
     rpm/ru.template.DiplomaApp.spec \
