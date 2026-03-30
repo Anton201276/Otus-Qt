@@ -109,49 +109,38 @@ Page {
                }
             }
         }
+    }
 
-        Column {
-            id: paramsBlockDrive
-            anchors.top: id_btn_layout.bottom
-            anchors.topMargin: top_margin_item
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 20
+    ButtonLayout {
+        id: id_btn_layout_next
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        visible: false
+        //anchors.top: paramsBlockDrive.bottom
+        //anchors.topMargin: top_margin_item * 2
 
-
+        Button {
+           id: id_btn_control_drive
+           text: "Заводские"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("PlantParamsPage.qml"))
+               console.log("PlantParamsPage clicked")
+           }
         }
 
-        ButtonLayout {
-            id: id_btn_layout_next
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
-            visible: false
-            //anchors.top: paramsBlockDrive.bottom
-            //anchors.topMargin: top_margin_item * 2
-
-            Button {
-               id: id_btn_control_drive
-               text: "Заводские"
-               border.color :  "#1199AA"
-               border.highlightColor: "#FF99FF"
-               onClicked: {
-                   pageStack.push(Qt.resolvedUrl("PlantParamsPage.qml"))
-                   console.log("ControlPage clicked")
-               }
-            }
-
-            Button {
-               id: id_btn_user_settigs
-               text: "Пользователя"
-               border.color :  "#1199AA"
-               border.highlightColor: "#FF99FF"
-               onClicked: {
-                   pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
-                   console.log("UserParamsPage clicked")
-               }
-            }
+        Button {
+           id: id_btn_user_settigs
+           text: "Пользователя"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
+               console.log("UserParamsPage clicked")
+           }
         }
-
     }
 
 

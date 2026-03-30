@@ -19,13 +19,6 @@ ListView {
         width: parent.width
         spacing: 5
 
-        TextField {
-            //width: parent.width - id_lbl_TypeDrive.width - left_margin_item - right_margin_item
-            label: name
-            text: nowValue
-            horizontalAlignment: TextInput.AlignRight
-            readOnly: true
-        }
 
 //        Row {
 //            Label {
@@ -35,12 +28,24 @@ ListView {
 //            }
 
 
-//            Label {
+//            TextField {
 //                //anchors.horizontalCenter: parent.horizontalCenter
-//                horizontalAlignment: TextInput.AlignRight
+//                //horizontalAlignment: TextInput.AlignRight
 //                text: nowValue
 //            }
 //        }
+
+        Row {
+            Label {
+                horizontalAlignment: TextInput.AlignLeft
+                text: name + " - "
+            }
+
+            Label {
+                text: nowValue
+                horizontalAlignment: TextInput.AlignRight
+            }
+        }
 
         Row {
             Label {

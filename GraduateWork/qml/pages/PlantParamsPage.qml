@@ -15,121 +15,112 @@ Page {
     property int right_margin_item: 30
     property int bottom_margin_item: 30
 
-    SilicaFlickable {
-            anchors.fill: parent
+    Column {
+        id: mainColumn
+        anchors.top: page.top
+        anchors.topMargin: 100
+        anchors.horizontalCenter: parent.horizontalCenter
+        //anchors.bottom: id_btn_layout_next.top
+        //anchors.bottomMargin: 50
+        spacing: 20
+
+        SilicaFlickable {
+            //anchors.fill: parent
             anchors.top: parent.top
-            anchors.topMargin: 100
-            contentHeight: mainColumn.height
+            //anchors.topMargin: 100
+            //contentHeight: mainColumn.height
+            //anchors.bottom: parent.bottom
 
             Column {
-                id: mainColumn
-                //anchors.fill: parent
+                id: plantColumn
                 anchors.horizontalCenter: parent.horizontalCenter
-                //horizontalAlignment: Text.AlignHCenter
-
                 spacing: 20
 
-                Column {
-                    id: blockColumn
+                Label {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 20
-
-                    Label {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pixelSize: Theme.fontSizeExtraLarge
-                        text: "Параметры блока"
-                    }
-
-                    ListModelValue {
-                        id: listBlockParams
-                        width: parent.width
-                        tblName: "mdlParamsBlock"
-
-                    }
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: Theme.fontSizeExtraLarge
+                    text: "Параметры блока"
                 }
 
-                Column {
-                    id: driveColumn
-                    //anchors.fill: parent
-                    spacing: 20
+                ListModelValue {
+                    id: listBlockParams
+                    width: parent.width
+                    tblName: "mdlParamsBlock"
 
-                    Label {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pixelSize: Theme.fontSizeExtraLarge
-                        text: "Параметры привода"
-                    }
-
-                    ListModelValue {
-                        id: listDriveParams
-                        width: parent.width
-                        tblName: "mdlParamsDrive"
-
-                    }
                 }
 
-
-
-                ButtonLayout {
-                    id: id_btn_layout_next
+                Label {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    //anchors.bottom: parent.bottom
-                    //anchors.bottomMargin: 50
-                    visible: true
-                    //anchors.top: paramsBlockDrive.bottom
-                    //anchors.topMargin: top_margin_item * 2
-
-                    Button {
-                       id: id_btn_main_page
-                       text: "На главную"
-                       border.color :  "#1199AA"
-                       border.highlightColor: "#FF99FF"
-                       onClicked: {
-                           pageStack.push(Qt.resolvedUrl("MainPage.qml"))
-                           console.log("MainPage clicked")
-                       }
-                    }
-
-
-                    Button {
-                       id: id_btn_user_settigs
-                       text: "Пользователя"
-                       border.color :  "#1199AA"
-                       border.highlightColor: "#FF99FF"
-                       onClicked: {
-                           pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
-                           console.log("UserParamsPage clicked")
-                       }
-                    }
-
-                    Button {
-                       id: id_btn_control_drive
-                       text: "Управление ЭП"
-                       border.color :  "#1199AA"
-                       border.highlightColor: "#FF99FF"
-                       onClicked: {
-                           pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
-                           console.log("ControlPage clicked")
-                       }
-                    }
-
-                    Button {
-                       id: id_btn_simulate_model
-                       text: "Модель ТПА и ЭП"
-                       border.color :  "#1199AA"
-                       border.highlightColor: "#FF99FF"
-                       onClicked: {
-                           pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
-                           console.log("ControlPage clicked")
-                       }
-                    }
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: Theme.fontSizeExtraLarge
+                    text: "Параметры привода"
                 }
 
+                ListModelValue {
+                    id: listDriveParams
+                    width: parent.width
+                    tblName: "mdlParamsDrive"
+
+                }
             }
-
-
         }
+    }
+
+    ButtonLayout {
+        id: id_btn_layout_next
+        //anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        visible: true
+        //anchors.top: mainColumn.bottom
+        //anchors.topMargin: top_margin_item
+
+        Button {
+           id: id_btn_main_page
+           text: "На главную"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+               console.log("MainPage clicked")
+           }
+        }
+
+
+        Button {
+           id: id_btn_user_settigs
+           text: "Пользователя"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
+               console.log("UserParamsPage clicked")
+           }
+        }
+
+        Button {
+           id: id_btn_control_drive
+           text: "Управление ЭП"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
+               console.log("ControlPage clicked")
+           }
+        }
+
+        Button {
+           id: id_btn_simulate_model
+           text: "Модель ТПА"
+           border.color :  "#1199AA"
+           border.highlightColor: "#FF99FF"
+           onClicked: {
+               pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
+               console.log("ControlPage clicked")
+           }
+        }
+    }
 
     Component.onCompleted: {
         listBlockParams.getDataFromDB()
