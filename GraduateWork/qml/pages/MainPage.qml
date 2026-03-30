@@ -117,55 +117,32 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 20
 
-            Label {
-                anchors.horizontalCenter: parent.horizontalCenter
-                horizontalAlignment: Text.AlignHCenter
-                text: "Параметры блока"
-            }
 
-            ListModelValue {
-                id: listBlockParams
-                width: parent.width
-                tblName: "mdlParamsBlock"
-
-            }
-
-            Label {
-                anchors.horizontalCenter: parent.horizontalCenter
-                horizontalAlignment: Text.AlignHCenter
-                text: "Параметры привода"
-            }
-
-            ListModelValue {
-                id: listDriveParams
-                width: parent.width
-                tblName: "mdlParamsDrive"
-
-            }
         }
 
         ButtonLayout {
             id: id_btn_layout_next
             anchors.horizontalCenter: parent.horizontalCenter
-            //anchors.bottom: parent.bottom
-            //anchors.bottomMargin: 50
-            anchors.top: paramsBlockDrive.bottom
-            anchors.topMargin: top_margin_item * 2
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            visible: false
+            //anchors.top: paramsBlockDrive.bottom
+            //anchors.topMargin: top_margin_item * 2
 
             Button {
                id: id_btn_control_drive
-               text: "Управление"
+               text: "Заводские"
                border.color :  "#1199AA"
                border.highlightColor: "#FF99FF"
                onClicked: {
-                   pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
+                   pageStack.push(Qt.resolvedUrl("PlantParamsPage.qml"))
                    console.log("ControlPage clicked")
                }
             }
 
             Button {
                id: id_btn_user_settigs
-               text: "Параметры"
+               text: "Пользователя"
                border.color :  "#1199AA"
                border.highlightColor: "#FF99FF"
                onClicked: {
@@ -196,8 +173,8 @@ Page {
             if (id_pb_connect.value >= id_pb_connect.maximumValue) {
                 console.log("Таймер завершён!")
                 running = false
-                listBlockParams.getDataFromDB()
-                listDriveParams.getDataFromDB()
+                id_btn_layout_next.visible = true
+
             }
         }
     }
