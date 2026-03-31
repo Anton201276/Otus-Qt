@@ -1,19 +1,13 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import QtQuick.Layouts 1.1
-import Aurora.Controls 1.0
 
 Page {
-    objectName: "PlantParamsPage"
+    objectName: "SimulationModelPage"
     allowedOrientations: Orientation.All
     id: page
 
-    PageHeader { title: qsTr("Параметры заводские") }
-
-    property int top_margin_item: 60
-    property int left_margin_item: 30
-    property int right_margin_item: 30
-    property int bottom_margin_item: 30
+    PageHeader { title: qsTr("Параметры модели ЭП") }
 
     ComboBox {
        id: id_cb_pageselect
@@ -29,7 +23,7 @@ Page {
            MenuItem { text: "На главную" }
            MenuItem { text: "Управления ЭП" }
            MenuItem { text: "Пользователя" }
-           MenuItem { text: "Модель ТПА" }
+           MenuItem { text: "Заводские" }
        }
 
        onCurrentIndexChanged: {
@@ -49,63 +43,12 @@ Page {
                console.log("UserParamsPage clicked")
            }
            else {
-               pageStack.replace(Qt.resolvedUrl("SimulationModelPage.qml"))
-               console.log("SimulationModel clicked")
+               pageStack.replace(Qt.resolvedUrl("PlantParamsPage.qml"))
+               console.log("PlantParamsPage clicked")
            }
        }
     }
-
-    Column {
-        id: mainColumn
-        anchors.top: id_cb_pageselect.bottom
-        anchors.topMargin: 40
-        anchors.horizontalCenter: parent.horizontalCenter
-        //anchors.bottom: id_btn_layout_next.top
-        //anchors.bottomMargin: 50
-        spacing: 20
-
-        SilicaFlickable {
-            //anchors.fill: parent
-            anchors.top: parent.top
-            //anchors.topMargin: 100
-            //contentHeight: mainColumn.height
-            //anchors.bottom: parent.bottom
-
-            Column {
-                id: plantColumn
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 20
-
-                Label {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: Theme.fontSizeExtraLarge
-                    text: "Параметры блока"
-                }
-
-                ListModelValue {
-                    id: listBlockParams
-                    width: parent.width
-                    tblName: "mdlParamsBlock"
-
-                }
-
-                Label {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: Theme.fontSizeExtraLarge
-                    text: "Параметры привода"
-                }
-
-                ListModelValue {
-                    id: listDriveParams
-                    width: parent.width
-                    tblName: "mdlParamsDrive"
-
-                }
-            }
-        }
-    }
+}
 
 //    ButtonLayout {
 //        id: id_btn_layout_next
@@ -122,7 +65,7 @@ Page {
 //           border.color :  "#1199AA"
 //           border.highlightColor: "#FF99FF"
 //           onClicked: {
-//               //pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+//               onClicked: pageStack.pop()
 //               while (pageStack.depth > 1) {
 //                           pageStack.pop()
 //               }
@@ -136,36 +79,36 @@ Page {
 //           border.color :  "#1199AA"
 //           border.highlightColor: "#FF99FF"
 //           onClicked: {
+//               onClicked: pageStack.pop()
 //               pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
 //               console.log("ControlPage clicked")
 //           }
 //        }
 
+
 //        Button {
 //           id: id_btn_user_settigs
-//           text: "Пользователя"
+//           text: "Заводские"
 //           border.color :  "#1199AA"
 //           border.highlightColor: "#FF99FF"
 //           onClicked: {
-//               pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
-//               console.log("UserParamsPage clicked")
+//               onClicked:
+//               pageStack.pop()
+//               pageStack.push(Qt.resolvedUrl("PlantParamsPage.qml"))
+//               console.log("PlantParamsPage clicked")
 //           }
 //        }
 
 //        Button {
 //           id: id_btn_simulate_model
-//           text: "Модель ТПА"
+//           text: "Пользователя"
 //           border.color :  "#1199AA"
 //           border.highlightColor: "#FF99FF"
 //           onClicked: {
-//               pageStack.push(Qt.resolvedUrl("SimulationModelPage.qml"))
-//               console.log("SimulationModel clicked")
+//               onClicked:
+//               pageStack.pop()
+//               pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
+//               console.log("UserParamsPage clicked")
 //           }
 //        }
 //    }
-
-    Component.onCompleted: {
-        listBlockParams.getDataFromDB()
-        listDriveParams.getDataFromDB()
-    }
-}

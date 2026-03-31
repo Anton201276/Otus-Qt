@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
     QObject::connect(rootObject, SIGNAL(messageSent(QString)),
                         &controlSim, SLOT(slot_onMessageReceived(QString)));
 
-
-
+    QObject::connect(rootObject, SIGNAL(setNewPosition(int)),
+                        &controlSim, SLOT(slot_onDriveSetPosition(int)));
 
 
     view->show();

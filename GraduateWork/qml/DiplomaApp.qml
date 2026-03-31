@@ -9,4 +9,5 @@ ApplicationWindow {
 
     signal messageSent(string text)
     signal dataSent(string name, int age)
+    signal setNewPosition(int posValve)
 }

@@ -10,14 +10,15 @@ Page {
     property string dataFilePath: StandardPaths.data
     property string typeDrive
 
+    property string piturePath: "qrc:/picture/picture/Gusar1.jpg"
+    property int pic_id: 1
+    property int pause: 0
+
     property int top_margin_item: 60
     property int left_margin_item: 30
     property int right_margin_item: 30
 
     property int rowQuery: 0
-
-
-
 
     PageHeader {
         objectName: "pageHeader"
@@ -33,23 +34,20 @@ Page {
         ]
     }
 
-    SilicaFlickable {
+    Item {
+        id: mainColumn
+        //anchors.horizontalCenter: parent.horizontalCenter
         anchors.fill: parent
-        contentHeight: content.height
-        quickScroll: true
+        anchors.topMargin: 120
 
         Label {
             id: top_lbl
-            anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
-            anchors.top: parent.top
-            anchors.topMargin: 120
             anchors.leftMargin: 120
             width: parent.width
             text: qsTr("Выберите тип")
             font.pixelSize: Theme.fontSizeExtraLarge
         }
-
 
         ComboBox {
            id: id_cb_type
@@ -64,7 +62,7 @@ Page {
                MenuItem { text: "BlueTooth" }
                MenuItem { text: "IrDA" }
                MenuItem { text: "USB/RS485" }
-          }
+           }
         }
 
         ProgressBar {
@@ -78,6 +76,7 @@ Page {
             value: 0
             valueText: value + "%"
         }
+
 
         ButtonLayout {
             id: id_btn_layout
@@ -105,45 +104,75 @@ Page {
                onClicked: {
                    pageStack.push(Qt.resolvedUrl("ConnectSettings.qml"))
                    dataSent(id_cb_type.value, id_cb_type.currentIndex)
-                   console.log("Button clicked")
+                   console.log("Connect Settings clicked")
+               }
+            }
+        }
+
+        Image {
+           id: imageDrive
+           anchors.top: id_btn_layout.bottom
+           anchors.topMargin: 40
+           source: piturePath
+           width: parent.width
+           height: 700
+           fillMode: Image.PreserveAspectFit
+        }
+
+        ButtonLayout {
+            id: id_btn_layout_next
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            visible: false
+            //anchors.top: paramsBlockDrive.bottom
+            //anchors.topMargin: top_margin_item * 2
+
+            Button {
+               id: id_btn_plant_params
+               text: "Заводские"
+               border.color :  "#1199AA"
+               border.highlightColor: "#FF99FF"
+               onClicked: {
+                   pageStack.push(Qt.resolvedUrl("PlantParamsPage.qml"))
+                   console.log("PlantParamsPage clicked")
+               }
+            }
+
+            Button {
+               id: id_btn_user_settigs
+               text: "Пользователя"
+               border.color :  "#1199AA"
+               border.highlightColor: "#FF99FF"
+               onClicked: {
+                   pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
+                   console.log("UserParamsPage clicked")
+               }
+            }
+
+            Button {
+               id: id_btn_control_drive
+               text: "Управление ЭП"
+               border.color :  "#1199AA"
+               border.highlightColor: "#FF99FF"
+               onClicked: {
+                   pageStack.push(Qt.resolvedUrl("ControlPage.qml"))
+                   console.log("ControlPage clicked")
+               }
+            }
+
+            Button {
+               id: id_btn_simulate_model
+               text: "Модель ТПА"
+               border.color :  "#1199AA"
+               border.highlightColor: "#FF99FF"
+               onClicked: {
+                   pageStack.push(Qt.resolvedUrl("SimulationModelPage.qml"))
+                   console.log("SimulationModel clicked")
                }
             }
         }
     }
-
-    ButtonLayout {
-        id: id_btn_layout_next
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
-        visible: false
-        //anchors.top: paramsBlockDrive.bottom
-        //anchors.topMargin: top_margin_item * 2
-
-        Button {
-           id: id_btn_control_drive
-           text: "Заводские"
-           border.color :  "#1199AA"
-           border.highlightColor: "#FF99FF"
-           onClicked: {
-               pageStack.push(Qt.resolvedUrl("PlantParamsPage.qml"))
-               console.log("PlantParamsPage clicked")
-           }
-        }
-
-        Button {
-           id: id_btn_user_settigs
-           text: "Пользователя"
-           border.color :  "#1199AA"
-           border.highlightColor: "#FF99FF"
-           onClicked: {
-               pageStack.push(Qt.resolvedUrl("UserParamsPage.qml"))
-               console.log("UserParamsPage clicked")
-           }
-        }
-    }
-
-
 
     Timer {
         id: id_connect_Timer
@@ -151,12 +180,29 @@ Page {
         repeat: true
         running: false
 
-        property var valueDB1
-        property var valueDB2
-
         onTriggered: {
             // Увеличиваем прогресс на долю от общего времени за один интервал
             id_pb_connect.value += 2.5
+
+            pause++
+
+            if (pause >= 5) {
+                pause = 0
+                pic_id++
+                if (pic_id > 3) {
+                    pic_id = 1
+                }
+
+                if (pic_id == 1) {
+                    piturePath = "qrc:/picture/picture/Gusar1.jpg"
+                }
+                else if (pic_id == 2) {
+                    piturePath = "qrc:/picture/picture/Gusar2.jpg"
+                }
+                else {
+                    piturePath = "qrc:/picture/picture/Gusar3.jpg"
+                }
+            }
 
             // Если прогресс достиг 100 %, останавливаем таймер
             if (id_pb_connect.value >= id_pb_connect.maximumValue) {
@@ -165,6 +211,9 @@ Page {
                 id_btn_layout_next.visible = true
 
             }
+            console.log("pause = ", pause)
+            console.log("pic_id = ", pic_id)
+            console.log("piturePath = ", piturePath)
         }
     }
 
